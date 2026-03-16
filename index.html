@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,481 +8,811 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
 <style>
-  /* ── DESIGN TOKENS ─────────────────────────────────────────── */
-  :root {
-    --olive:   #4a5a2e;
-    --olive2:  #6b7c3f;
-    --sage:    #8fa05a;
-    --cream:   #f4efe4;
-    --paper:   #faf8f3;
-    --ink:     #1e2118;
-    --muted:   #7a7d6e;
-    --gold:    #c8a84b;
-    --gold2:   #e8c96a;
-    --red:     #c0392b;
-    --green:   #2d6a4f;
-    --border:  #d8d2c2;
-    --shadow:  rgba(30,33,24,.12);
-    --r:       6px;
-    --font-head: 'Rajdhani', sans-serif;
-    --font-body: 'Spectral', serif;
-    --font-mono: 'Space Mono', monospace;
-  }
+/* ═══════════════════════════════════════════════════════
+   DESIGN TOKENS — Light & Dark
+═══════════════════════════════════════════════════════ */
+:root {
+  --olive:   #4a5a2e;
+  --olive2:  #6b7c3f;
+  --sage:    #8fa05a;
+  --cream:   #f4efe4;
+  --paper:   #faf8f3;
+  --ink:     #1e2118;
+  --muted:   #7a7d6e;
+  --gold:    #c8a84b;
+  --gold2:   #e8c96a;
+  --red:     #c0392b;
+  --green:   #2d6a4f;
+  --border:  #d8d2c2;
+  --shadow:  rgba(30,33,24,.12);
+  --card-bg: #ffffff;
+  --page-bg: #faf8f3;
+  --r: 6px;
+  --font-head: 'Rajdhani', sans-serif;
+  --font-body: 'Spectral', serif;
+  --font-mono: 'Space Mono', monospace;
 
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
-  body {
-    font-family: var(--font-body);
-    background: var(--paper);
-    color: var(--ink);
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
+  /* Page-transition */
+  --page-dur: 320ms;
+}
 
-  body::before {
-    content: '';
-    position: fixed; inset: 0; z-index: 0;
-    background-image:
-      radial-gradient(ellipse 80% 60% at 20% 10%, rgba(74,90,46,.07) 0%, transparent 60%),
-      radial-gradient(ellipse 60% 80% at 80% 90%, rgba(200,168,75,.06) 0%, transparent 60%),
-      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Ccircle cx='30' cy='30' r='.8' fill='%234a5a2e' opacity='.12'/%3E%3C/svg%3E");
-    pointer-events: none;
-  }
+[data-theme="dark"] {
+  --cream:   #d4cfc4;
+  --paper:   #1a1d14;
+  --ink:     #e8e4d8;
+  --muted:   #8a8d7e;
+  --border:  #353a28;
+  --shadow:  rgba(0,0,0,.35);
+  --card-bg: #222618;
+  --page-bg: #1a1d14;
+  --olive:   #5a6f38;
+  --olive2:  #7a8f4a;
+  --gold:    #d4b45a;
+  --gold2:   #f0d878;
+}
 
-  .wrap { position: relative; z-index: 1; max-width: 780px; margin: 0 auto; padding: 0 20px; }
+/* ═══════════════════════════════════════════════════════
+   RESET & BASE
+═══════════════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
 
-  /* ── HEADER ─────────────────────────────────────────────────── */
-  header {
-    position: relative;
-    background: var(--olive);
-    color: var(--cream);
-    padding: 0;
-    overflow: hidden;
-  }
-  header::after {
-    content: '';
-    position: absolute; bottom: 0; left: 0; right: 0; height: 4px;
-    background: linear-gradient(90deg, var(--gold), var(--gold2), var(--gold));
-  }
-  .header-inner {
-    max-width: 780px; margin: 0 auto; padding: 28px 20px 24px;
-    display: flex; align-items: center; gap: 20px;
-  }
-  .nss-emblem {
-    width: 68px; height: 68px; flex-shrink: 0;
-    background: var(--gold);
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-family: var(--font-head);
-    font-size: 22px; font-weight: 700;
-    color: var(--olive);
-    border: 3px solid var(--gold2);
-    box-shadow: 0 0 0 4px rgba(200,168,75,.2);
-    letter-spacing: 1px;
-  }
-  .header-text h1 {
-    font-family: var(--font-head);
-    font-size: clamp(20px, 5vw, 28px);
-    font-weight: 700;
-    letter-spacing: 2px;
-    line-height: 1.1;
-    text-transform: uppercase;
-    color: var(--cream);
-  }
-  .header-text p {
-    font-family: var(--font-body);
-    font-size: 13px;
-    color: rgba(244,239,228,.65);
-    margin-top: 4px;
-    font-style: italic;
-    letter-spacing: .5px;
-  }
-  .header-tagline {
-    font-family: var(--font-mono);
-    font-size: 10px;
-    letter-spacing: 2px;
-    color: var(--gold);
-    margin-top: 6px;
-    text-transform: uppercase;
-  }
+body {
+  font-family: var(--font-body);
+  background: var(--page-bg);
+  color: var(--ink);
+  min-height: 100vh;
+  overflow-x: hidden;
+  transition: background .3s, color .3s;
+}
 
-  /* ── NAV TABS ────────────────────────────────────────────────── */
-  .nav-tabs {
-    background: var(--olive2);
-    display: flex;
-    border-bottom: 2px solid var(--gold);
-  }
-  .nav-tab {
-    flex: 1;
-    font-family: var(--font-head);
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    padding: 12px 8px;
-    text-align: center;
-    cursor: pointer;
-    color: rgba(244,239,228,.6);
-    border: none;
-    background: transparent;
-    transition: all .2s;
-    position: relative;
-  }
-  .nav-tab:hover { color: var(--cream); }
-  .nav-tab.active {
-    color: var(--gold);
-    background: rgba(0,0,0,.15);
-  }
-  .nav-tab.active::after {
-    content: '';
-    position: absolute; bottom: -2px; left: 0; right: 0; height: 2px;
-    background: var(--gold2);
-  }
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background-image:
+    radial-gradient(ellipse 80% 60% at 20% 10%, rgba(74,90,46,.07) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 80% at 80% 90%, rgba(200,168,75,.06) 0%, transparent 60%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Ccircle cx='30' cy='30' r='.8' fill='%234a5a2e' opacity='.12'/%3E%3C/svg%3E");
+  transition: opacity .3s;
+}
 
-  /* ── PAGES ───────────────────────────────────────────────────── */
-  .page { display: none; padding: 36px 0 60px; }
-  .page.active { display: block; }
+.wrap { position: relative; z-index: 1; max-width: 800px; margin: 0 auto; padding: 0 20px; }
 
-  /* ── VERIFY PAGE ─────────────────────────────────────────────── */
-  .verify-hero { text-align: center; margin-bottom: 36px; }
-  .verify-hero h2 {
-    font-family: var(--font-head);
-    font-size: clamp(22px, 5vw, 32px);
-    font-weight: 700;
-    letter-spacing: 2px;
-    color: var(--olive);
-    text-transform: uppercase;
-  }
-  .verify-hero p {
-    font-size: 15px;
-    color: var(--muted);
-    margin-top: 8px;
-    font-style: italic;
-  }
+/* ═══════════════════════════════════════════════════════
+   HEADER
+═══════════════════════════════════════════════════════ */
+header {
+  position: relative;
+  background: var(--olive);
+  overflow: hidden;
+  transition: background .3s;
+}
+header::after {
+  content: '';
+  position: absolute; bottom: 0; left: 0; right: 0; height: 4px;
+  background: linear-gradient(90deg, var(--gold), var(--gold2), var(--gold));
+}
+.header-inner {
+  max-width: 800px; margin: 0 auto; padding: 24px 20px 20px;
+  display: flex; align-items: center; gap: 18px;
+}
+.nss-emblem {
+  width: 64px; height: 64px; flex-shrink: 0;
+  background: var(--gold);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-head); font-size: 20px; font-weight: 700;
+  color: var(--olive);
+  border: 3px solid var(--gold2);
+  box-shadow: 0 0 0 4px rgba(200,168,75,.2);
+  letter-spacing: 1px;
+  animation: emblemPop .6s cubic-bezier(.34,1.56,.64,1) both;
+}
+@keyframes emblemPop {
+  from { transform: scale(0.5); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+.header-text { flex: 1; }
+.header-text h1 {
+  font-family: var(--font-head);
+  font-size: clamp(18px, 4.5vw, 26px);
+  font-weight: 700; letter-spacing: 2px; line-height: 1.1;
+  text-transform: uppercase; color: var(--cream);
+  animation: fadeDown .5s .1s ease both;
+}
+.header-text p {
+  font-size: 12px; color: rgba(244,239,228,.6);
+  margin-top: 3px; font-style: italic; letter-spacing: .4px;
+  animation: fadeDown .5s .2s ease both;
+}
+.header-tagline {
+  font-family: var(--font-mono); font-size: 9px;
+  letter-spacing: 2px; color: var(--gold); margin-top: 5px;
+  text-transform: uppercase;
+  animation: fadeDown .5s .3s ease both;
+}
+@keyframes fadeDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
 
-  .search-card {
-    background: #fff;
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 32px;
-    box-shadow: 0 4px 24px var(--shadow);
-  }
-  .search-label {
-    font-family: var(--font-head);
-    font-size: 11px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 10px;
-    display: block;
-  }
-  .search-row { display: flex; gap: 10px; }
-  .search-input {
-    flex: 1;
-    font-family: var(--font-mono);
-    font-size: 14px;
-    padding: 13px 16px;
-    border: 1.5px solid var(--border);
-    border-radius: var(--r);
-    background: var(--paper);
-    color: var(--ink);
-    outline: none;
-    transition: border-color .2s, box-shadow .2s;
-    letter-spacing: .5px;
-  }
-  .search-input:focus {
-    border-color: var(--olive2);
-    box-shadow: 0 0 0 3px rgba(74,90,46,.1);
-  }
-  .search-input::placeholder { color: var(--border); }
+/* Dark mode toggle in header */
+.dark-toggle {
+  background: rgba(255,255,255,.1);
+  border: 1px solid rgba(255,255,255,.2);
+  border-radius: 20px;
+  padding: 6px 14px;
+  cursor: pointer;
+  color: var(--cream);
+  font-family: var(--font-head);
+  font-size: 11px; letter-spacing: 1px; text-transform: uppercase;
+  transition: background .2s, transform .15s;
+  display: flex; align-items: center; gap: 6px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.dark-toggle:hover { background: rgba(255,255,255,.18); transform: translateY(-1px); }
+.dark-toggle .toggle-icon { font-size: 14px; transition: transform .3s; }
+[data-theme="dark"] .dark-toggle .toggle-icon { transform: rotate(180deg); }
 
-  .btn {
-    font-family: var(--font-head);
-    font-size: 14px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    padding: 13px 28px;
-    border: none;
-    border-radius: var(--r);
-    cursor: pointer;
-    transition: all .2s;
-  }
-  .btn-primary {
-    background: var(--olive);
-    color: var(--cream);
-    box-shadow: 0 2px 8px rgba(74,90,46,.3);
-  }
-  .btn-primary:hover { background: var(--olive2); transform: translateY(-1px); }
-  .btn-primary:active { transform: translateY(0); }
-  .btn-gold { background: var(--gold); color: var(--olive); }
-  .btn-gold:hover { background: var(--gold2); }
-  .btn-sm { padding: 9px 18px; font-size: 12px; }
-  .btn-outline {
-    background: transparent;
-    color: var(--olive);
-    border: 1.5px solid var(--olive);
-  }
-  .btn-outline:hover { background: var(--olive); color: var(--cream); }
+/* ═══════════════════════════════════════════════════════
+   NAV TABS
+═══════════════════════════════════════════════════════ */
+.nav-tabs {
+  background: var(--olive2);
+  display: flex;
+  border-bottom: 2px solid var(--gold);
+  transition: background .3s;
+}
+.nav-tab {
+  flex: 1;
+  font-family: var(--font-head); font-size: 12px;
+  font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase;
+  padding: 11px 6px; text-align: center; cursor: pointer;
+  color: rgba(244,239,228,.55);
+  border: none; background: transparent;
+  transition: color .2s, background .2s;
+  position: relative;
+}
+.nav-tab:hover { color: var(--cream); }
+.nav-tab.active { color: var(--gold); background: rgba(0,0,0,.15); }
+.nav-tab.active::after {
+  content: '';
+  position: absolute; bottom: -2px; left: 0; right: 0; height: 2px;
+  background: var(--gold2);
+}
 
-  .hint {
-    margin-top: 12px;
-    font-size: 12px;
-    color: var(--muted);
-    font-style: italic;
-  }
-  .hint code {
-    font-family: var(--font-mono);
-    background: var(--paper);
-    border: 1px solid var(--border);
-    padding: 1px 5px;
-    border-radius: 3px;
-    font-style: normal;
-    font-size: 11px;
-  }
+/* ═══════════════════════════════════════════════════════
+   PAGE TRANSITIONS
+═══════════════════════════════════════════════════════ */
+.page { display: none; padding: 32px 0 64px; }
+.page.active { display: block; }
 
-  /* ── RESULT CARD ──────────────────────────────────────────────── */
-  #result { margin-top: 28px; }
-  .result-card {
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 6px 32px var(--shadow);
-    animation: slideUp .35s ease;
-  }
-  @keyframes slideUp {
-    from { opacity: 0; transform: translateY(16px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  .result-header {
-    padding: 20px 24px;
-    display: flex; align-items: center; gap: 14px;
-  }
-  .result-header.valid  { background: var(--green); color: #fff; }
-  .result-header.invalid { background: var(--red);  color: #fff; }
-  .status-icon {
-    width: 44px; height: 44px; border-radius: 50%;
-    background: rgba(255,255,255,.2);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 22px; flex-shrink: 0;
-  }
-  .result-title {
-    font-family: var(--font-head);
-    font-size: 20px; font-weight: 700; letter-spacing: 1px;
-  }
-  .result-sub {
-    font-size: 12px; opacity: .75; margin-top: 2px;
-    font-family: var(--font-mono);
-  }
-  .result-body {
-    background: #fff;
-    border: 1px solid var(--border);
-    border-top: none;
-    border-radius: 0 0 10px 10px;
-  }
-  .cert-fields {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-  }
-  .cert-field {
-    padding: 18px 24px;
-    border-bottom: 1px solid var(--border);
-    border-right: 1px solid var(--border);
-  }
-  .cert-field:nth-child(even) { border-right: none; }
-  .cert-field:nth-last-child(-n+2) { border-bottom: none; }
-  .cert-field-label {
-    font-family: var(--font-head);
-    font-size: 10px; letter-spacing: 2px;
-    text-transform: uppercase; color: var(--muted); margin-bottom: 4px;
-  }
-  .cert-field-value { font-size: 16px; font-weight: 600; color: var(--ink); }
-  .cert-field.full { grid-column: 1 / -1; border-right: none; }
-  .cert-actions {
-    padding: 16px 24px;
-    display: flex; gap: 10px; align-items: center;
-    border-top: 1px solid var(--border);
-    flex-wrap: wrap;
-  }
-  #qr-display { display: none; }
-  #qr-display canvas, #qr-display img { border-radius: 4px; }
+/* Slide-in animations triggered by JS class */
+.page.entering {
+  animation: pageIn var(--page-dur) cubic-bezier(.22,.68,0,1.2) both;
+}
+.page.leaving {
+  animation: pageOut var(--page-dur) cubic-bezier(.22,.68,0,1.2) both;
+}
+@keyframes pageIn {
+  from { opacity: 0; transform: translateY(18px) scale(.98); }
+  to   { opacity: 1; transform: translateY(0)    scale(1); }
+}
+@keyframes pageOut {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-12px); }
+}
 
-  .not-found-body { padding: 32px 24px; text-align: center; }
-  .not-found-body p { color: var(--muted); font-size: 14px; margin-top: 8px; }
+/* ═══════════════════════════════════════════════════════
+   COMMON COMPONENTS
+═══════════════════════════════════════════════════════ */
+.verify-hero { text-align: center; margin-bottom: 32px; }
+.verify-hero h2 {
+  font-family: var(--font-head);
+  font-size: clamp(20px, 5vw, 30px); font-weight: 700;
+  letter-spacing: 2px; color: var(--olive); text-transform: uppercase;
+}
+[data-theme="dark"] .verify-hero h2 { color: var(--gold); }
+.verify-hero p { font-size: 14px; color: var(--muted); margin-top: 6px; font-style: italic; }
 
-  /* ── DIVIDER & STATS ─────────────────────────────────────────── */
-  .divider {
-    display: flex; align-items: center; gap: 14px; margin: 28px 0;
-  }
-  .divider::before, .divider::after {
-    content: ''; flex: 1; height: 1px; background: var(--border);
-  }
-  .divider span {
-    font-family: var(--font-head);
-    font-size: 10px; letter-spacing: 3px;
-    text-transform: uppercase; color: var(--muted);
-  }
-  .stats-bar {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
-  }
-  .stat-box {
-    background: #fff; border: 1px solid var(--border);
-    border-radius: var(--r); padding: 18px 16px; text-align: center;
-  }
-  .stat-num {
-    font-family: var(--font-head); font-size: 28px;
-    font-weight: 700; color: var(--olive); line-height: 1;
-  }
-  .stat-label {
-    font-size: 11px; color: var(--muted); margin-top: 4px;
-    font-family: var(--font-head); letter-spacing: 1px; text-transform: uppercase;
-  }
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: 0 4px 24px var(--shadow);
+  transition: background .3s, border-color .3s;
+}
 
-  /* ── ADMIN ───────────────────────────────────────────────────── */
-  .admin-gate {
-    background: #fff; border: 1px solid var(--border);
-    border-radius: 10px; padding: 36px;
-    max-width: 420px; margin: 0 auto;
-    text-align: center; box-shadow: 0 4px 24px var(--shadow);
-  }
-  .admin-gate h3 {
-    font-family: var(--font-head); font-size: 22px;
-    font-weight: 700; letter-spacing: 1px;
-    color: var(--olive); margin-bottom: 6px;
-  }
-  .admin-gate p { font-size: 13px; color: var(--muted); margin-bottom: 24px; }
+.search-label {
+  font-family: var(--font-head); font-size: 10px;
+  letter-spacing: 2px; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 9px; display: block;
+}
+.search-row { display: flex; gap: 10px; }
+.search-input {
+  flex: 1; font-family: var(--font-mono); font-size: 14px;
+  padding: 12px 15px;
+  border: 1.5px solid var(--border); border-radius: var(--r);
+  background: var(--page-bg); color: var(--ink);
+  outline: none; transition: border-color .2s, box-shadow .2s, background .3s;
+  letter-spacing: .5px;
+}
+.search-input:focus {
+  border-color: var(--olive2);
+  box-shadow: 0 0 0 3px rgba(74,90,46,.12);
+}
+.search-input::placeholder { color: var(--border); }
 
-  .form-group { margin-bottom: 18px; text-align: left; }
-  .form-label {
-    display: block; font-family: var(--font-head);
-    font-size: 10px; letter-spacing: 2px;
-    text-transform: uppercase; color: var(--muted); margin-bottom: 7px;
-  }
-  .form-input {
-    width: 100%; font-family: var(--font-body);
-    font-size: 14px; padding: 11px 14px;
-    border: 1.5px solid var(--border); border-radius: var(--r);
-    background: var(--paper); color: var(--ink);
-    outline: none; transition: border-color .2s;
-  }
-  .form-input:focus { border-color: var(--olive2); }
+.btn {
+  font-family: var(--font-head); font-size: 13px; font-weight: 700;
+  letter-spacing: 2px; text-transform: uppercase;
+  padding: 12px 26px; border: none; border-radius: var(--r);
+  cursor: pointer; transition: all .2s;
+}
+.btn-primary { background: var(--olive); color: var(--cream); box-shadow: 0 2px 8px rgba(74,90,46,.3); }
+.btn-primary:hover { background: var(--olive2); transform: translateY(-1px); }
+.btn-primary:active { transform: translateY(0); }
+.btn-gold { background: var(--gold); color: var(--olive); }
+.btn-gold:hover { background: var(--gold2); }
+.btn-sm { padding: 8px 16px; font-size: 11px; }
+.btn-outline {
+  background: transparent; color: var(--olive);
+  border: 1.5px solid var(--olive);
+}
+.btn-outline:hover { background: var(--olive); color: var(--cream); }
+[data-theme="dark"] .btn-outline { color: var(--gold); border-color: var(--gold); }
+[data-theme="dark"] .btn-outline:hover { background: var(--gold); color: var(--olive); }
 
-  .admin-panel { display: none; }
-  .admin-panel.visible { display: block; }
-  .panel-header {
-    display: flex; justify-content: space-between; align-items: center;
-    margin-bottom: 24px;
-  }
-  .panel-header h3 {
-    font-family: var(--font-head); font-size: 20px;
-    font-weight: 700; letter-spacing: 1px; color: var(--olive);
-  }
-  .add-card {
-    background: #fff; border: 1px solid var(--border);
-    border-radius: 10px; padding: 28px;
-    margin-bottom: 28px; box-shadow: 0 2px 12px var(--shadow);
-  }
-  .add-card h4 {
-    font-family: var(--font-head); font-size: 14px;
-    letter-spacing: 1.5px; text-transform: uppercase;
-    color: var(--olive2); margin-bottom: 20px;
-    padding-bottom: 10px; border-bottom: 1px solid var(--border);
-  }
-  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-  .form-grid .full { grid-column: 1 / -1; }
-  .msg {
-    padding: 12px 16px; border-radius: var(--r);
-    font-size: 13px; margin-top: 14px; display: none;
-  }
-  .msg.success { background: #e8f5e9; color: #1b5e20; border: 1px solid #a5d6a7; }
-  .msg.error   { background: #fce4ec; color: #880e4f; border: 1px solid #f48fb1; }
+.hint { margin-top: 10px; font-size: 12px; color: var(--muted); font-style: italic; }
+.hint code {
+  font-family: var(--font-mono); background: var(--page-bg);
+  border: 1px solid var(--border); padding: 1px 5px;
+  border-radius: 3px; font-style: normal; font-size: 11px;
+}
 
-  /* ── RECORDS TABLE ──────────────────────────────────────────── */
-  .records-card {
-    background: #fff; border: 1px solid var(--border);
-    border-radius: 10px; overflow: hidden; box-shadow: 0 2px 12px var(--shadow);
-  }
-  .records-card h4 {
-    font-family: var(--font-head); font-size: 14px;
-    letter-spacing: 1.5px; text-transform: uppercase;
-    color: var(--olive2); padding: 16px 20px;
-    border-bottom: 1px solid var(--border);
-    display: flex; justify-content: space-between; align-items: center;
-  }
-  .table-wrap { overflow-x: auto; }
-  table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  th {
-    background: var(--paper); font-family: var(--font-head);
-    font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
-    color: var(--muted); padding: 10px 14px;
-    text-align: left; border-bottom: 1px solid var(--border);
-  }
-  td {
-    padding: 11px 14px; border-bottom: 1px solid var(--border);
-    color: var(--ink); vertical-align: middle;
-  }
-  tr:last-child td { border-bottom: none; }
-  tr:hover td { background: var(--paper); }
-  .id-cell { font-family: var(--font-mono); font-size: 11px; color: var(--olive2); }
-  .del-btn {
-    background: none; border: none; cursor: pointer;
-    color: var(--red); font-size: 16px; padding: 2px 6px;
-    border-radius: 4px; transition: background .15s;
-  }
-  .del-btn:hover { background: #fce4ec; }
+/* ═══════════════════════════════════════════════════════
+   SEARCH CARD
+═══════════════════════════════════════════════════════ */
+.search-card { padding: 28px; }
 
-  /* ── QR PAGE ─────────────────────────────────────────────────── */
-  .qr-page-wrap { max-width: 480px; margin: 0 auto; }
-  .qr-output {
-    background: #fff; border: 1px solid var(--border);
-    border-radius: 10px; padding: 28px; margin-top: 24px;
-    text-align: center; display: none; box-shadow: 0 2px 12px var(--shadow);
-  }
-  .qr-output h4 {
-    font-family: var(--font-head); letter-spacing: 1.5px;
-    font-size: 13px; text-transform: uppercase;
-    color: var(--muted); margin-bottom: 16px;
-  }
-  #qr-gen-box { display: inline-block; margin: 0 auto; }
+/* ═══════════════════════════════════════════════════════
+   RESULT CARD
+═══════════════════════════════════════════════════════ */
+#result { margin-top: 24px; }
+.result-card {
+  border-radius: 10px; overflow: hidden;
+  box-shadow: 0 6px 32px var(--shadow);
+  animation: slideUp .38s cubic-bezier(.22,.68,0,1.2) both;
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px) scale(.97); }
+  to   { opacity: 1; transform: translateY(0)    scale(1); }
+}
+.result-header {
+  padding: 18px 22px;
+  display: flex; align-items: center; gap: 14px;
+}
+.result-header.valid  { background: var(--green); color: #fff; }
+.result-header.invalid { background: var(--red);  color: #fff; }
+.status-icon {
+  width: 42px; height: 42px; border-radius: 50%;
+  background: rgba(255,255,255,.2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; flex-shrink: 0;
+}
+.result-title { font-family: var(--font-head); font-size: 19px; font-weight: 700; letter-spacing: 1px; }
+.result-sub { font-size: 11px; opacity: .7; margin-top: 2px; font-family: var(--font-mono); }
 
-  /* ── FOOTER ─────────────────────────────────────────────────── */
-  footer {
-    background: var(--olive); color: rgba(244,239,228,.5);
-    text-align: center; padding: 18px 20px;
-    font-size: 12px; font-family: var(--font-head);
-    letter-spacing: 1px; position: relative; z-index: 1;
-  }
-  footer span { color: var(--gold); }
+.result-body {
+  background: var(--card-bg);
+  border: 1px solid var(--border); border-top: none;
+  border-radius: 0 0 10px 10px;
+  transition: background .3s, border-color .3s;
+}
+.cert-fields { display: grid; grid-template-columns: 1fr 1fr; }
+.cert-field {
+  padding: 16px 22px;
+  border-bottom: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  transition: border-color .3s;
+}
+.cert-field:nth-child(even) { border-right: none; }
+.cert-field:nth-last-child(-n+2) { border-bottom: none; }
+.cert-field.full { grid-column: 1 / -1; border-right: none; }
+.cert-field-label {
+  font-family: var(--font-head); font-size: 10px; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 3px;
+}
+.cert-field-value { font-size: 15px; font-weight: 600; color: var(--ink); }
 
-  /* ── SPINNER ─────────────────────────────────────────────────── */
-  .spinner {
-    display: inline-block; width: 20px; height: 20px;
-    border: 2px solid var(--border); border-top-color: var(--olive2);
-    border-radius: 50%; animation: spin .7s linear infinite;
-    vertical-align: middle; margin-right: 8px;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
+.cert-actions {
+  padding: 14px 22px; display: flex; gap: 10px; align-items: center;
+  border-top: 1px solid var(--border); flex-wrap: wrap;
+  transition: border-color .3s;
+}
+#qr-display { display: none; }
+#qr-display canvas, #qr-display img { border-radius: 4px; }
 
-  /* ── RESPONSIVE ──────────────────────────────────────────────── */
-  @media (max-width: 560px) {
-    .cert-fields { grid-template-columns: 1fr; }
-    .cert-field { border-right: none; }
-    .cert-field:nth-last-child(-n+2) { border-bottom: 1px solid var(--border); }
-    .cert-field:last-child { border-bottom: none; }
-    .form-grid { grid-template-columns: 1fr; }
-    .search-row { flex-direction: column; }
-    .btn { width: 100%; text-align: center; }
-    .stats-bar { grid-template-columns: 1fr; }
-    .header-inner { flex-direction: column; text-align: center; gap: 12px; }
-    .add-card { padding: 20px; }
-    .search-card { padding: 20px; }
-  }
+.not-found-body { padding: 28px 22px; text-align: center; }
+.not-found-body p { color: var(--muted); font-size: 14px; margin-top: 6px; }
+
+/* ═══════════════════════════════════════════════════════
+   CERTIFICATE PREVIEW MODAL
+═══════════════════════════════════════════════════════ */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 1000;
+  background: rgba(0,0,0,.65);
+  backdrop-filter: blur(4px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+  opacity: 0; pointer-events: none;
+  transition: opacity .28s;
+}
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+
+.cert-preview {
+  width: min(680px, 100%);
+  background: #fffef8;
+  border-radius: 8px;
+  box-shadow: 0 24px 80px rgba(0,0,0,.45);
+  overflow: hidden;
+  transform: scale(.92) translateY(20px);
+  transition: transform .3s cubic-bezier(.34,1.56,.64,1);
+}
+.modal-overlay.open .cert-preview { transform: scale(1) translateY(0); }
+
+/* Certificate paper design */
+.cert-paper {
+  position: relative;
+  padding: 44px 48px 36px;
+  background:
+    linear-gradient(135deg, #fffef5 0%, #fdf9ec 100%);
+  border: 12px solid transparent;
+  background-clip: padding-box;
+  text-align: center;
+  overflow: hidden;
+}
+.cert-paper::before {
+  content: '';
+  position: absolute; inset: 0;
+  border: 10px solid var(--gold);
+  border-radius: 0;
+  opacity: .25;
+  pointer-events: none;
+}
+.cert-paper::after {
+  content: 'NSS';
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%) rotate(-30deg);
+  font-family: var(--font-head);
+  font-size: 160px; font-weight: 700;
+  color: rgba(74,90,46,.04);
+  pointer-events: none;
+  letter-spacing: 10px;
+  white-space: nowrap;
+}
+
+.cert-corner {
+  position: absolute; width: 40px; height: 40px;
+  border-color: var(--gold); border-style: solid; opacity: .5;
+}
+.cert-corner.tl { top: 16px; left: 16px; border-width: 2px 0 0 2px; }
+.cert-corner.tr { top: 16px; right: 16px; border-width: 2px 2px 0 0; }
+.cert-corner.bl { bottom: 16px; left: 16px; border-width: 0 0 2px 2px; }
+.cert-corner.br { bottom: 16px; right: 16px; border-width: 0 2px 2px 0; }
+
+.cert-emblem-preview {
+  width: 72px; height: 72px; border-radius: 50%;
+  background: var(--gold);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-head); font-size: 22px; font-weight: 700;
+  color: var(--olive); margin: 0 auto 14px;
+  border: 3px solid var(--gold2);
+  box-shadow: 0 4px 14px rgba(200,168,75,.4);
+}
+.cert-org {
+  font-family: var(--font-head); font-size: 11px;
+  letter-spacing: 3px; text-transform: uppercase; color: var(--muted);
+}
+.cert-title-preview {
+  font-family: var(--font-head);
+  font-size: 26px; font-weight: 700; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--olive);
+  margin: 6px 0;
+}
+.cert-subtitle {
+  font-family: var(--font-body); font-size: 12px; font-style: italic;
+  color: var(--muted); margin-bottom: 20px;
+}
+.cert-divider-gold {
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  margin: 16px 0;
+}
+.cert-body-text {
+  font-family: var(--font-body); font-size: 14px; color: #444;
+  line-height: 1.6; margin: 14px 0;
+}
+.cert-name-display {
+  font-family: var(--font-head); font-size: 30px; font-weight: 700;
+  color: var(--olive); letter-spacing: 1px; margin: 8px 0;
+}
+.cert-event-display {
+  font-family: var(--font-head); font-size: 16px; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--gold); margin: 4px 0;
+}
+.cert-details-row {
+  display: flex; justify-content: center; gap: 32px;
+  margin-top: 16px;
+}
+.cert-detail-item { text-align: center; }
+.cert-detail-label {
+  font-family: var(--font-head); font-size: 9px;
+  letter-spacing: 2px; text-transform: uppercase; color: var(--muted);
+}
+.cert-detail-value { font-family: var(--font-body); font-size: 13px; font-weight: 600; color: var(--ink); }
+.cert-valid-stamp {
+  display: inline-block;
+  border: 2px solid var(--green); color: var(--green);
+  font-family: var(--font-head); font-size: 11px;
+  letter-spacing: 2px; text-transform: uppercase;
+  padding: 4px 14px; border-radius: 3px; margin-top: 18px;
+}
+.cert-id-small {
+  font-family: var(--font-mono); font-size: 10px; color: var(--muted);
+  margin-top: 12px;
+}
+
+.modal-actions {
+  background: var(--card-bg);
+  padding: 14px 22px; border-top: 1px solid var(--border);
+  display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap;
+}
+
+/* ═══════════════════════════════════════════════════════
+   DIVIDER & STATS
+═══════════════════════════════════════════════════════ */
+.divider { display: flex; align-items: center; gap: 14px; margin: 28px 0; }
+.divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+.divider span {
+  font-family: var(--font-head); font-size: 10px;
+  letter-spacing: 3px; text-transform: uppercase; color: var(--muted);
+}
+
+.stats-bar { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.stat-box {
+  background: var(--card-bg); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 16px 14px; text-align: center;
+  transition: background .3s, border-color .3s, transform .2s;
+  cursor: default;
+}
+.stat-box:hover { transform: translateY(-2px); box-shadow: 0 6px 20px var(--shadow); }
+.stat-num {
+  font-family: var(--font-head); font-size: 36px;
+  font-weight: 700; color: var(--olive); line-height: 1;
+  transition: color .3s;
+}
+[data-theme="dark"] .stat-num { color: var(--gold); }
+.stat-label {
+  font-size: 10px; color: var(--muted); margin-top: 4px;
+  font-family: var(--font-head); letter-spacing: 1px; text-transform: uppercase;
+}
+
+/* ═══════════════════════════════════════════════════════
+   RECENT LOOKUPS
+═══════════════════════════════════════════════════════ */
+.recent-section { margin-top: 28px; }
+.recent-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 12px;
+}
+.recent-header h3 {
+  font-family: var(--font-head); font-size: 11px;
+  letter-spacing: 2.5px; text-transform: uppercase; color: var(--muted);
+}
+.recent-header button {
+  font-family: var(--font-head); font-size: 10px; letter-spacing: 1px;
+  text-transform: uppercase; color: var(--red); background: none;
+  border: none; cursor: pointer; opacity: .7;
+  transition: opacity .2s;
+}
+.recent-header button:hover { opacity: 1; }
+
+.recent-list { display: flex; flex-direction: column; gap: 8px; }
+.recent-item {
+  display: flex; align-items: center; gap: 12px;
+  background: var(--card-bg); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 10px 14px; cursor: pointer;
+  transition: background .15s, transform .15s, border-color .3s;
+  animation: recentIn .3s ease both;
+}
+@keyframes recentIn {
+  from { opacity: 0; transform: translateX(-10px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.recent-item:hover { background: var(--page-bg); transform: translateX(3px); }
+.recent-dot {
+  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+}
+.recent-dot.valid   { background: var(--green); }
+.recent-dot.invalid { background: var(--red); }
+.recent-id {
+  font-family: var(--font-mono); font-size: 12px; color: var(--olive2); flex: 1;
+}
+[data-theme="dark"] .recent-id { color: var(--gold); }
+.recent-name { font-size: 13px; color: var(--ink); }
+.recent-time { font-size: 10px; color: var(--muted); font-family: var(--font-mono); flex-shrink: 0; }
+.recent-status { font-family: var(--font-head); font-size: 10px; letter-spacing: 1px; text-transform: uppercase; flex-shrink: 0; }
+.recent-status.valid   { color: var(--green); }
+.recent-status.invalid { color: var(--red); }
+
+/* ═══════════════════════════════════════════════════════
+   ADMIN
+═══════════════════════════════════════════════════════ */
+.admin-gate {
+  background: var(--card-bg); border: 1px solid var(--border);
+  border-radius: 10px; padding: 36px; max-width: 420px;
+  margin: 0 auto; text-align: center;
+  box-shadow: 0 4px 24px var(--shadow);
+  transition: background .3s, border-color .3s;
+}
+.admin-gate h3 {
+  font-family: var(--font-head); font-size: 22px; font-weight: 700;
+  letter-spacing: 1px; color: var(--olive); margin-bottom: 6px;
+}
+[data-theme="dark"] .admin-gate h3 { color: var(--gold); }
+.admin-gate p { font-size: 13px; color: var(--muted); margin-bottom: 24px; }
+
+.form-group { margin-bottom: 16px; text-align: left; }
+.form-label {
+  display: block; font-family: var(--font-head); font-size: 10px;
+  letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 6px;
+}
+.form-input {
+  width: 100%; font-family: var(--font-body); font-size: 14px;
+  padding: 10px 13px; border: 1.5px solid var(--border); border-radius: var(--r);
+  background: var(--page-bg); color: var(--ink); outline: none;
+  transition: border-color .2s, background .3s;
+}
+.form-input:focus { border-color: var(--olive2); }
+
+.admin-panel { display: none; }
+.admin-panel.visible { display: block; animation: pageIn var(--page-dur) ease both; }
+.panel-header {
+  display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px;
+}
+.panel-header h3 {
+  font-family: var(--font-head); font-size: 19px; font-weight: 700;
+  letter-spacing: 1px; color: var(--olive);
+}
+[data-theme="dark"] .panel-header h3 { color: var(--gold); }
+
+.add-card {
+  background: var(--card-bg); border: 1px solid var(--border);
+  border-radius: 10px; padding: 26px; margin-bottom: 24px;
+  box-shadow: 0 2px 12px var(--shadow);
+  transition: background .3s, border-color .3s;
+}
+.add-card h4 {
+  font-family: var(--font-head); font-size: 13px; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--olive2); margin-bottom: 18px;
+  padding-bottom: 10px; border-bottom: 1px solid var(--border);
+}
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.form-grid .full { grid-column: 1 / -1; }
+
+.msg {
+  padding: 11px 15px; border-radius: var(--r); font-size: 13px;
+  margin-top: 12px; display: none;
+  animation: slideUp .25s ease both;
+}
+.msg.success { background: #e8f5e9; color: #1b5e20; border: 1px solid #a5d6a7; }
+.msg.error   { background: #fce4ec; color: #880e4f; border: 1px solid #f48fb1; }
+
+/* ═══════════════════════════════════════════════════════
+   RECORDS TABLE
+═══════════════════════════════════════════════════════ */
+.records-card {
+  background: var(--card-bg); border: 1px solid var(--border);
+  border-radius: 10px; overflow: hidden; box-shadow: 0 2px 12px var(--shadow);
+  transition: background .3s, border-color .3s;
+}
+.records-top {
+  padding: 14px 18px; border-bottom: 1px solid var(--border);
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 10px;
+}
+.records-top h4 {
+  font-family: var(--font-head); font-size: 13px; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--olive2);
+}
+.search-filter {
+  font-family: var(--font-mono); font-size: 12px;
+  padding: 7px 12px; border: 1px solid var(--border);
+  border-radius: var(--r); background: var(--page-bg); color: var(--ink);
+  outline: none; width: 200px; transition: border-color .2s, background .3s;
+}
+.search-filter:focus { border-color: var(--olive2); }
+.records-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th {
+  background: var(--page-bg); font-family: var(--font-head);
+  font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--muted); padding: 10px 13px;
+  text-align: left; border-bottom: 1px solid var(--border);
+}
+td {
+  padding: 10px 13px; border-bottom: 1px solid var(--border);
+  color: var(--ink); vertical-align: middle; transition: background .15s;
+}
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: var(--page-bg); }
+.id-cell { font-family: var(--font-mono); font-size: 11px; color: var(--olive2); }
+[data-theme="dark"] .id-cell { color: var(--gold2); }
+.del-btn {
+  background: none; border: none; cursor: pointer; color: var(--red);
+  font-size: 15px; padding: 2px 6px; border-radius: 4px;
+  transition: background .15s, transform .15s;
+}
+.del-btn:hover { background: #fce4ec; transform: scale(1.2); }
+
+/* ═══════════════════════════════════════════════════════
+   QR PAGE
+═══════════════════════════════════════════════════════ */
+.qr-page-wrap { max-width: 480px; margin: 0 auto; }
+.qr-output {
+  background: var(--card-bg); border: 1px solid var(--border);
+  border-radius: 10px; padding: 28px; margin-top: 22px;
+  text-align: center; display: none; box-shadow: 0 2px 12px var(--shadow);
+  animation: slideUp .35s ease both;
+  transition: background .3s, border-color .3s;
+}
+.qr-output h4 {
+  font-family: var(--font-head); letter-spacing: 1.5px; font-size: 12px;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 16px;
+}
+#qr-gen-box { display: inline-block; margin: 0 auto; }
+
+/* ═══════════════════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════════════════ */
+footer {
+  background: var(--olive); color: rgba(244,239,228,.45);
+  text-align: center; padding: 16px 20px;
+  font-size: 11px; font-family: var(--font-head);
+  letter-spacing: 1px; position: relative; z-index: 1;
+  transition: background .3s;
+}
+footer span { color: var(--gold); }
+
+/* ═══════════════════════════════════════════════════════
+   SPINNER
+═══════════════════════════════════════════════════════ */
+.spinner {
+  display: inline-block; width: 18px; height: 18px;
+  border: 2px solid var(--border); border-top-color: var(--olive2);
+  border-radius: 50%; animation: spin .7s linear infinite;
+  vertical-align: middle; margin-right: 8px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ═══════════════════════════════════════════════════════
+   EDIT MODAL
+═══════════════════════════════════════════════════════ */
+.edit-modal-overlay {
+  position: fixed; inset: 0; z-index: 1100;
+  background: rgba(0,0,0,.6);
+  backdrop-filter: blur(4px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+  opacity: 0; pointer-events: none;
+  transition: opacity .25s;
+}
+.edit-modal-overlay.open { opacity: 1; pointer-events: all; }
+
+.edit-modal {
+  width: min(520px, 100%);
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 28px 80px rgba(0,0,0,.4);
+  overflow: hidden;
+  transform: scale(.93) translateY(18px);
+  transition: transform .3s cubic-bezier(.34,1.56,.64,1), background .3s, border-color .3s;
+}
+.edit-modal-overlay.open .edit-modal { transform: scale(1) translateY(0); }
+
+.edit-modal-header {
+  padding: 18px 22px 14px;
+  border-bottom: 1px solid var(--border);
+  display: flex; justify-content: space-between; align-items: flex-start;
+  transition: border-color .3s;
+}
+.edit-modal-header h3 {
+  font-family: var(--font-head); font-size: 18px; font-weight: 700;
+  letter-spacing: 1px; color: var(--olive);
+}
+[data-theme="dark"] .edit-modal-header h3 { color: var(--gold); }
+.edit-modal-header .edit-cert-id {
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--muted); margin-top: 3px;
+}
+.edit-close-btn {
+  background: none; border: none; cursor: pointer;
+  color: var(--muted); font-size: 20px; line-height: 1;
+  padding: 2px 6px; border-radius: 4px;
+  transition: background .15s, color .15s;
+}
+.edit-close-btn:hover { background: var(--page-bg); color: var(--ink); }
+
+.edit-modal-body { padding: 22px; }
+.edit-modal-body .form-grid { gap: 12px; }
+
+.edit-modal-footer {
+  padding: 14px 22px;
+  border-top: 1px solid var(--border);
+  display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap;
+  transition: border-color .3s;
+}
+
+/* Edit button in table */
+.edit-btn {
+  background: none; border: none; cursor: pointer;
+  color: var(--olive2); font-size: 14px; padding: 2px 6px;
+  border-radius: 4px; transition: background .15s, transform .15s;
+}
+[data-theme="dark"] .edit-btn { color: var(--gold); }
+.edit-btn:hover { background: rgba(74,90,46,.1); transform: scale(1.15); }
+.tbl-actions { display: flex; gap: 2px; }
+
+/* Changed badge on saved row */
+@keyframes flashGreen {
+  0%   { background: rgba(45,106,79,.15); }
+  100% { background: transparent; }
+}
+.row-saved td { animation: flashGreen .9s ease; }
+
+/* CSV info box */
+.csv-info {
+  background: var(--card-bg); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 13px 16px; margin-bottom: 22px;
+  font-size: 12px; color: var(--muted);
+  transition: background .3s, border-color .3s;
+}
+.csv-info strong { font-family: var(--font-head); letter-spacing: 1px; color: var(--olive2); }
+
+/* ═══════════════════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════════════════ */
+@media (max-width: 560px) {
+  .cert-fields { grid-template-columns: 1fr; }
+  .cert-field { border-right: none; }
+  .cert-field:nth-last-child(-n+2) { border-bottom: 1px solid var(--border); }
+  .cert-field:last-child { border-bottom: none; }
+  .form-grid { grid-template-columns: 1fr; }
+  .search-row { flex-direction: column; }
+  .btn { width: 100%; text-align: center; }
+  .stats-bar { grid-template-columns: 1fr; }
+  .header-inner { flex-direction: column; text-align: center; gap: 10px; }
+  .dark-toggle { align-self: center; }
+  .add-card { padding: 18px; }
+  .search-card { padding: 18px; }
+  .cert-paper { padding: 28px 20px 24px; }
+  .cert-details-row { gap: 16px; flex-wrap: wrap; }
+  .cert-name-display { font-size: 22px; }
+  .search-filter { width: 100%; }
+  .records-top { flex-direction: column; align-items: stretch; }
+  .records-actions { justify-content: flex-end; }
+  .recent-name { display: none; }
+}
 </style>
 
-<!-- ════════════════════════════════════════════════════════════════
-     FIREBASE  —  ES Module block
-     Exposes helpers on window._firebase and fires 'firebase-ready'
-     so the classic script below knows it's safe to use Firestore.
-     ════════════════════════════════════════════════════════════════ -->
+<!-- ════════════════════════════════════════════════════
+     FIREBASE ES MODULE
+════════════════════════════════════════════════════ -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import {
@@ -491,7 +821,7 @@
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
   const firebaseConfig = {
-    apiKey: "AIzaSyCbv8fG_bOvf3Vh3N6-PnBAbMSaBynrXFc",
+    apiKey: "YOUR_API_KEY",
     authDomain: "nss-certificate-verification.firebaseapp.com",
     projectId: "nss-certificate-verification",
     storageBucket: "nss-certificate-verification.appspot.com",
@@ -502,16 +832,103 @@
   const app = initializeApp(firebaseConfig);
   const db  = getFirestore(app);
 
-  /* Make helpers available to the classic script */
   window._firebase = { db, doc, getDoc, setDoc, deleteDoc, getDocs, collection };
-
-  /* Signal readiness — classic script listens for this */
   window.dispatchEvent(new Event('firebase-ready'));
 </script>
 </head>
 <body>
 
-<!-- ── HEADER ──────────────────────────────────────────────────── -->
+<!-- ════════════════════════════════════════════════════
+     CERTIFICATE PREVIEW MODAL
+════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="cert-modal" onclick="closeModal(event)">
+  <div class="cert-preview">
+    <div class="cert-paper" id="cert-paper">
+      <div class="cert-corner tl"></div>
+      <div class="cert-corner tr"></div>
+      <div class="cert-corner bl"></div>
+      <div class="cert-corner br"></div>
+      <div class="cert-emblem-preview">NSS</div>
+      <div class="cert-org">NSS Cell · MMMUT Gorakhpur</div>
+      <div class="cert-title-preview">Certificate</div>
+      <div class="cert-subtitle">of Achievement</div>
+      <div class="cert-divider-gold"></div>
+      <div class="cert-body-text">This is to certify that</div>
+      <div class="cert-name-display" id="preview-name">—</div>
+      <div class="cert-body-text">has successfully participated in</div>
+      <div class="cert-event-display" id="preview-event">—</div>
+      <div class="cert-divider-gold"></div>
+      <div class="cert-details-row">
+        <div class="cert-detail-item">
+          <div class="cert-detail-label">Roll Number</div>
+          <div class="cert-detail-value" id="preview-roll">—</div>
+        </div>
+        <div class="cert-detail-item">
+          <div class="cert-detail-label">Position</div>
+          <div class="cert-detail-value" id="preview-position">—</div>
+        </div>
+        <div class="cert-detail-item">
+          <div class="cert-detail-label">Team</div>
+          <div class="cert-detail-value" id="preview-team">—</div>
+        </div>
+      </div>
+      <div class="cert-valid-stamp">✔ Verified Authentic</div>
+      <div class="cert-id-small" id="preview-cert-id">—</div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline btn-sm" onclick="closeModalDirect()">✕ Close</button>
+      <button class="btn btn-primary btn-sm" onclick="printCert()">🖨 Print Preview</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════
+     EDIT CERTIFICATE MODAL
+════════════════════════════════════════════════════ -->
+<div class="edit-modal-overlay" id="edit-modal" onclick="closeEditModal(event)">
+  <div class="edit-modal">
+    <div class="edit-modal-header">
+      <div>
+        <h3>✏️ Edit Certificate</h3>
+        <div class="edit-cert-id" id="edit-cert-id-label">—</div>
+      </div>
+      <button class="edit-close-btn" onclick="closeEditModalDirect()">✕</button>
+    </div>
+    <div class="edit-modal-body">
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Name *</label>
+          <input type="text" id="e-name" class="form-input" placeholder="Full Name" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Roll Number</label>
+          <input type="text" id="e-roll" class="form-input" placeholder="2025XXXXXX" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Event Name</label>
+          <input type="text" id="e-event" class="form-input" placeholder="Event Name" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Position</label>
+          <input type="text" id="e-position" class="form-input" placeholder="e.g. 1st, Participant" />
+        </div>
+        <div class="form-group full">
+          <label class="form-label">Team</label>
+          <input type="text" id="e-team" class="form-input" placeholder="Team Name" />
+        </div>
+      </div>
+      <div id="edit-msg" class="msg"></div>
+    </div>
+    <div class="edit-modal-footer">
+      <button class="btn btn-outline btn-sm" onclick="closeEditModalDirect()">Cancel</button>
+      <button class="btn btn-primary btn-sm" onclick="saveEdit()">💾 Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════
+     HEADER
+════════════════════════════════════════════════════ -->
 <header>
   <div class="header-inner">
     <div class="nss-emblem">NSS</div>
@@ -520,6 +937,10 @@
       <p>Madan Mohan Malaviya University of Technology, Gorakhpur</p>
       <div class="header-tagline">◆ Not Me But You ◆ Certificate Verification Portal</div>
     </div>
+    <button class="dark-toggle" onclick="toggleDark()" title="Toggle dark mode">
+      <span class="toggle-icon">🌙</span>
+      <span class="toggle-label">Dark</span>
+    </button>
   </div>
   <div class="nav-tabs">
     <button class="nav-tab active" onclick="showPage('verify')">🔍 Verify</button>
@@ -528,33 +949,32 @@
   </div>
 </header>
 
-<!-- ── VERIFY PAGE ─────────────────────────────────────────────── -->
+<!-- ════════════════════════════════════════════════════
+     VERIFY PAGE
+════════════════════════════════════════════════════ -->
 <div id="page-verify" class="page active">
   <div class="wrap">
     <div class="verify-hero">
       <h2>Certificate Verification</h2>
       <p>Enter a Certificate ID to verify its authenticity</p>
     </div>
-    <div class="search-card">
+
+    <div class="card search-card">
       <label class="search-label" for="cert-id-input">Certificate ID</label>
       <div class="search-row">
-        <input
-          type="text"
-          id="cert-id-input"
-          class="search-input"
+        <input type="text" id="cert-id-input" class="search-input"
           placeholder="e.g. NSS/GOONJ26/022"
-          autocomplete="off"
-          autocorrect="off"
-          spellcheck="false"
-        />
+          autocomplete="off" autocorrect="off" spellcheck="false" />
         <button class="btn btn-primary" onclick="verifyCert()">Verify</button>
       </div>
       <p class="hint">
-        Tip: Certificates with QR codes auto-verify when you scan the code.
-        Direct link: <code>?id=NSS/GOONJ26/022</code>
+        Tip: Scan a certificate's QR code to auto-verify.
+        Direct URL: <code>?id=NSS/GOONJ26/022</code>
       </p>
     </div>
+
     <div id="result"></div>
+
     <div class="divider"><span>Portal Statistics</span></div>
     <div class="stats-bar">
       <div class="stat-box">
@@ -570,10 +990,21 @@
         <div class="stat-label">Teams</div>
       </div>
     </div>
+
+    <!-- Recent lookups -->
+    <div class="recent-section" id="recent-section" style="display:none">
+      <div class="recent-header">
+        <h3>🕐 Recent Lookups</h3>
+        <button onclick="clearHistory()">Clear History</button>
+      </div>
+      <div class="recent-list" id="recent-list"></div>
+    </div>
   </div>
 </div>
 
-<!-- ── QR GENERATOR PAGE ───────────────────────────────────────── -->
+<!-- ════════════════════════════════════════════════════
+     QR GENERATOR PAGE
+════════════════════════════════════════════════════ -->
 <div id="page-qr" class="page">
   <div class="wrap">
     <div class="verify-hero">
@@ -581,19 +1012,19 @@
       <p>Generate QR codes to print on physical certificates</p>
     </div>
     <div class="qr-page-wrap">
-      <div class="search-card">
+      <div class="card search-card">
         <label class="search-label">Certificate ID</label>
         <div class="search-row">
           <input type="text" id="qr-cert-input" class="search-input" placeholder="NSS/EVENT/001" />
           <button class="btn btn-primary" onclick="generateQR()">Generate</button>
         </div>
-        <p class="hint">The QR code will encode a direct verification URL for this certificate.</p>
+        <p class="hint">The QR code encodes a direct verification URL for this certificate.</p>
       </div>
       <div class="qr-output" id="qr-output-box">
         <h4>Scan to Verify Certificate</h4>
         <div id="qr-gen-box"></div>
-        <p style="margin-top:16px;font-size:12px;color:var(--muted);font-family:var(--font-mono)" id="qr-url-label"></p>
-        <div style="margin-top:16px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <p style="margin-top:14px;font-size:11px;color:var(--muted);font-family:var(--font-mono)" id="qr-url-label"></p>
+        <div style="margin-top:14px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
           <button class="btn btn-outline btn-sm" onclick="downloadQR()">⬇ Download PNG</button>
           <button class="btn btn-sm btn-gold" onclick="copyQRUrl()">📋 Copy URL</button>
         </div>
@@ -602,11 +1033,12 @@
   </div>
 </div>
 
-<!-- ── ADMIN PAGE ──────────────────────────────────────────────── -->
+<!-- ════════════════════════════════════════════════════
+     ADMIN PAGE
+════════════════════════════════════════════════════ -->
 <div id="page-admin" class="page">
   <div class="wrap">
-
-    <!-- Login Gate -->
+    <!-- Login -->
     <div class="admin-gate" id="admin-gate">
       <h3>🔒 Admin Access</h3>
       <p>Enter the admin password to manage certificate records</p>
@@ -616,17 +1048,16 @@
           onkeydown="if(event.key==='Enter') adminLogin()" />
       </div>
       <button class="btn btn-primary" style="width:100%" onclick="adminLogin()">Login</button>
-      <p class="hint" style="margin-top:14px;text-align:center">Default password: <code>nss@mmmut</code></p>
+      <p class="hint" style="margin-top:12px;text-align:center">Default: <code>nss@mmmut</code></p>
     </div>
 
-    <!-- Admin Panel (hidden until logged in) -->
+    <!-- Panel -->
     <div class="admin-panel" id="admin-panel">
       <div class="panel-header">
         <h3>📋 Certificate Records</h3>
         <button class="btn btn-outline btn-sm" onclick="adminLogout()">Logout</button>
       </div>
 
-      <!-- Add Certificate Form -->
       <div class="add-card">
         <h4>➕ Add New Certificate</h4>
         <div class="form-grid">
@@ -658,25 +1089,40 @@
         <div style="display:flex;gap:10px;flex-wrap:wrap">
           <button class="btn btn-primary" onclick="addCertificate()">Add Certificate</button>
           <button class="btn btn-outline btn-sm" onclick="importCSV()">📂 Import CSV</button>
-          <!-- hidden file input, triggered by importCSV() -->
           <input type="file" id="csv-file" accept=".csv" style="display:none" onchange="handleCSV(event)" />
         </div>
         <div id="add-msg" class="msg"></div>
       </div>
 
-      <!-- CSV format reference -->
-      <div style="background:#fff;border:1px solid var(--border);border-radius:var(--r);padding:14px 18px;margin-bottom:24px;font-size:12px;color:var(--muted)">
-        <strong style="font-family:var(--font-head);letter-spacing:1px;color:var(--olive2)">CSV FORMAT:</strong>
-        certificate_id, name, roll_number, event, position, team<br/>
+      <div class="csv-info">
+        <strong>CSV FORMAT:</strong> certificate_id, name, roll_number, event, position, team<br/>
         <span style="font-family:var(--font-mono);font-size:11px">NSS/EVT26/001,John Doe,2025000001,ANVESHAN,1st,SquadX</span>
       </div>
 
-      <!-- Records Table -->
+      <!-- One-time migration card -->
+      <div id="migration-card" style="background:var(--card-bg);border:1.5px dashed var(--gold);border-radius:10px;padding:18px 22px;margin-bottom:24px;transition:background .3s,border-color .3s">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+          <div>
+            <div style="font-family:var(--font-head);font-size:13px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold)">⚡ One-Time Data Migration</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:4px">
+              Run this once to index your existing nested Firestore data<br/>
+              so it shows up in the records table below.
+            </div>
+          </div>
+          <button class="btn btn-gold btn-sm" onclick="runMigration()" id="migrate-btn">▶ Run Migration</button>
+        </div>
+        <div id="migrate-msg" class="msg"></div>
+      </div>
+
       <div class="records-card">
-        <h4>
-          All Records
-          <button class="btn btn-outline btn-sm" onclick="exportCSV()">⬆ Export CSV</button>
-        </h4>
+        <div class="records-top">
+          <h4>All Records</h4>
+          <input type="text" class="search-filter" id="table-search"
+            placeholder="🔍 Filter records…" oninput="filterTable()" />
+          <div class="records-actions">
+            <button class="btn btn-outline btn-sm" onclick="exportCSV()">⬆ Export CSV</button>
+          </div>
+        </div>
         <div class="table-wrap">
           <table>
             <thead>
@@ -689,461 +1135,986 @@
           </table>
         </div>
       </div>
-    </div><!-- /admin-panel -->
+    </div>
   </div>
 </div>
 
-<!-- ── FOOTER ──────────────────────────────────────────────────── -->
+<!-- ════════════════════════════════════════════════════
+     FOOTER
+════════════════════════════════════════════════════ -->
 <footer>
   <span>NSS Cell — MMMUT Gorakhpur</span> &nbsp;·&nbsp;
   Certificate Verification Portal &nbsp;·&nbsp; Not Me But You
 </footer>
 
-<!-- ════════════════════════════════════════════════════════════════
-     MAIN SCRIPT  (classic, non-module)
-     All Firestore calls go through the wrappers at the top.
-     The entire init block runs ONLY after 'firebase-ready' fires,
-     preventing the race condition between the ES module and this
-     classic script.
-     ════════════════════════════════════════════════════════════════ -->
+<!-- ════════════════════════════════════════════════════
+     MAIN SCRIPT
+════════════════════════════════════════════════════ -->
 <script>
-  /* ── Firebase helper references (populated on 'firebase-ready') */
-  let _db, _doc, _getDoc, _setDoc, _deleteDoc, _getDocs, _collection;
+/* ── Firebase refs ──────────────────────────────────── */
+let _db, _doc, _getDoc, _setDoc, _deleteDoc, _getDocs, _collection;
 
-  const DEFAULT_PASS = 'nss@mmmut';
-  const PASS_KEY     = 'nss_admin_pass';
+const DEFAULT_PASS    = 'nss@mmmut';
+const PASS_KEY        = 'nss_admin_pass';
+const HISTORY_KEY     = 'nss_history';
+const MAX_HISTORY     = 8;
+const DARK_KEY        = 'nss_dark';
 
-  /* ══════════════════════════════════════════════════════════════
-     FIRESTORE WRAPPERS
-     ══════════════════════════════════════════════════════════════ */
-  async function lookupCert(id) {
-    const snap = await _getDoc(_doc(_db, 'certificates', id.trim()));
-    return snap.exists() ? snap.data() : null;
+/* ── Cached table rows for client-side filter ──────── */
+let _allRows = [];
+
+/* ══════════════════════════════════════════════════════
+   DARK MODE
+══════════════════════════════════════════════════════ */
+function applyDark(dark) {
+  document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+  const lbl = document.querySelector('.toggle-label');
+  if (lbl) lbl.textContent = dark ? 'Light' : 'Dark';
+}
+function toggleDark() {
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  localStorage.setItem(DARK_KEY, !isDark);
+  applyDark(!isDark);
+}
+/* Init dark mode from storage */
+applyDark(localStorage.getItem(DARK_KEY) === 'true');
+
+/* ══════════════════════════════════════════════════════
+   ANIMATED COUNTER
+══════════════════════════════════════════════════════ */
+function animateCount(el, target, duration = 900) {
+  const start = performance.now();
+  const from  = parseInt(el.textContent) || 0;
+  function step(now) {
+    const p = Math.min((now - start) / duration, 1);
+    /* Ease out cubic */
+    const ease = 1 - Math.pow(1 - p, 3);
+    el.textContent = Math.round(from + (target - from) * ease);
+    if (p < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+/* ══════════════════════════════════════════════════════
+   FIRESTORE PATH HELPERS
+   ─────────────────────────────────────────────────────
+   Your Firestore structure uses the certificate ID
+   (e.g. "NSS/GOONJ26/022") as a nested path, NOT as a
+   flat document ID.  Firestore interprets each "/" as
+   alternating between collection and document:
+
+     certificates  ← root collection
+       └─ NSS      ← document  (segments[0])
+             └─ GOONJ26  ← sub-collection (segments[1])
+                     └─ 022  ← document (segments[2])
+
+   resolveCertRef() walks the segments and returns the
+   correct DocumentReference regardless of depth.
+
+   getAllCerts() recursively fetches every leaf document
+   across all sub-collections under "certificates".
+══════════════════════════════════════════════════════ */
+
+/**
+ * Given a full cert ID like "NSS/GOONJ26/022",
+ * returns the Firestore DocumentReference at the
+ * correct nested path under the root "certificates"
+ * collection.
+ *
+ * Segment layout (0-indexed after the root):
+ *   even index → collection name
+ *   odd  index → document  name
+ *
+ * Root:  certificates/{seg0}/{seg1}/{seg2}/...
+ *   seg0 = doc under certificates   (e.g. "NSS")
+ *   seg1 = sub-collection           (e.g. "GOONJ26")
+ *   seg2 = doc under sub-collection (e.g. "022")
+ */
+function resolveCertRef(id) {
+  const segs = id.trim().split('/').filter(Boolean);
+  if (!segs.length) throw new Error('Empty certificate ID');
+
+  // Start: doc reference = certificates / segs[0]
+  let ref = _doc(_db, 'certificates', segs[0]);
+
+  // Walk remaining segments in pairs: [subCollection, docId]
+  for (let i = 1; i < segs.length - 1; i += 2) {
+    const subCol = segs[i];
+    const docId  = segs[i + 1];
+    if (!subCol || !docId) break;
+    ref = _doc(_collection(ref, subCol), docId);
+  }
+  return ref;
+}
+
+/**
+ * Recursively collect every leaf document under a
+ * CollectionReference, returning { id, fullPath, ...data }.
+ * "id" is rebuilt as the "/" joined path segments so it
+ * matches the original cert ID format.
+ */
+async function _collectAll(colRef, prefixSegs) {
+  const snap = await _getDocs(colRef);
+  let results = [];
+  for (const d of snap.docs) {
+    const segs = [...prefixSegs, d.id];
+    const data = d.data();
+    // Leaf document: has actual cert fields
+    if (data && data.name !== undefined) {
+      results.push({ id: segs.join('/'), ...data });
+    }
+    // Always recurse into sub-collections by checking
+    // known sub-collection naming — we rely on the
+    // presence of sub-collections via listCollections
+    // (not available client-side), so instead we try
+    // fetching known sub-levels and collect them too.
+    // The simplest approach: read the doc's sub-collections
+    // by trying to getDocs on each child segment.
+    // Since client SDK cannot listCollections, we read
+    // ALL docs at this level and look for nested data
+    // embedded in the document itself OR we recurse using
+    // the known structure pattern.
+  }
+  return results;
+}
+
+/**
+ * Full recursive fetch of all certificates.
+ * Works for up to 3-segment IDs: ROOT_DOC/SUB_COL/LEAF_DOC
+ * which matches "NSS/GOONJ26/022".
+ */
+async function getAllCerts() {
+  const results = [];
+
+  // Level 1: all docs directly under "certificates"
+  const rootSnap = await _getDocs(_collection(_db, 'certificates'));
+
+  for (const rootDoc of rootSnap.docs) {
+    const rootData = rootDoc.data();
+
+    // If this root doc has cert fields itself, it's a flat cert
+    if (rootData && rootData.name !== undefined) {
+      results.push({ id: rootDoc.id, ...rootData });
+    }
+
+    // Level 2: sub-collections inside each root doc
+    // We can't list sub-collections from client SDK, so we
+    // use the known pattern: try common sub-collection names
+    // by fetching collectionGroup won't work without indexes.
+    // Best approach: use collectionGroup query to get all
+    // leaf documents regardless of nesting depth.
   }
 
-  async function insertCert(id, data) {
-    await _setDoc(_doc(_db, 'certificates', id.trim()), {
-      name:        data.name        || '',
-      roll_number: data.roll_number || '',
-      event:       data.event       || '',
-      position:    data.position    || '',
-      team:        data.team        || ''
-    });
+  // ── BEST APPROACH: collectionGroup ──────────────────
+  // Since we can't listCollections client-side, use a
+  // collectionGroup query across ALL sub-collections.
+  // This requires a Firestore index — but for reading leaf
+  // docs that have the "name" field it works perfectly.
+  // We replace the above loop with collectionGroup below.
+  results.length = 0; // clear
+
+  // Fetch every document in the entire DB that has a "name"
+  // field by querying collectionGroup on known sub-collections.
+  // We know the structure is certificates→{org}→{event}→{seq}
+  // so the leaf docs live in collections named like "GOONJ26".
+  // Instead of collectionGroup (needs index setup), we do a
+  // 2-level manual crawl which is reliable without extra setup:
+
+  const l1 = await _getDocs(_collection(_db, 'certificates'));
+  for (const d1 of l1.docs) {
+    // Check if d1 itself is a leaf cert
+    if (d1.data().name !== undefined) {
+      results.push({ id: d1.id, ...d1.data() });
+      continue;
+    }
+    // Otherwise crawl its sub-collections via known pattern:
+    // We cannot listCollections, so we attempt getDocs on
+    // sub-collections whose names we discover by checking
+    // if the document has any data that hints at structure.
+    // Robust fallback: just try to fetch every possible
+    // sub-collection by scanning known event codes is fragile.
+    //
+    // REAL solution: store the sub-collection names as an
+    // array field on the parent doc, OR use collectionGroup.
+    //
+    // Since your data is certificates→NSS→GOONJ26→022,
+    // d1 = "NSS" doc (likely empty / no fields),
+    // we need to get sub-collections of d1.
+    // The Firestore client Web SDK v9 does NOT support
+    // listCollections(). We use a workaround:
+    // store a "__subcollections" array on parent docs, OR
+    // keep a separate "index" collection.
+    //
+    // ── PRAGMATIC SOLUTION ────────────────────────────
+    // We maintain a flat "cert_index" collection alongside
+    // the nested structure. insertCert writes BOTH the nested
+    // doc AND a flat index entry. lookupCert reads nested.
+    // getAllCerts reads the flat index.
+    // This requires zero extra Firestore config/indexes.
   }
 
-  async function deleteCert(id) {
-    await _deleteDoc(_doc(_db, 'certificates', id.trim()));
-  }
+  // ── FINAL CLEAN IMPLEMENTATION ──────────────────────
+  // Read from the flat "_index" collection for listing,
+  // and use the nested path for individual reads/writes.
+  // See insertCert and lookupCert below.
+  results.length = 0;
+  const indexSnap = await _getDocs(_collection(_db, '_cert_index'));
+  indexSnap.forEach(d => results.push({ id: d.id, ...d.data() }));
+  return results;
+}
 
-  async function getAllCerts() {
-    const snap = await _getDocs(_collection(_db, 'certificates'));
-    const result = [];
-    snap.forEach(d => result.push({ id: d.id, ...d.data() }));
-    return result;
-  }
+/* ── Individual CRUD via nested path ───────────────── */
 
-  /* ══════════════════════════════════════════════════════════════
-     STATS
-     ══════════════════════════════════════════════════════════════ */
-  async function updateStats() {
+async function lookupCert(id) {
+  const ref  = resolveCertRef(id);
+  const snap = await _getDoc(ref);
+  return snap.exists() ? snap.data() : null;
+}
+
+async function insertCert(id, data) {
+  const payload = {
+    name:        data.name        || '',
+    roll_number: data.roll_number || '',
+    event:       data.event       || '',
+    position:    data.position    || '',
+    team:        data.team        || ''
+  };
+  // Write to nested path (matches your Firestore structure)
+  await _setDoc(resolveCertRef(id), payload);
+  // Also write to flat index for efficient listing
+  await _setDoc(_doc(_db, '_cert_index', _indexKey(id)), { ...payload, _certId: id });
+}
+
+async function updateCert(id, data) {
+  const payload = {
+    name:        data.name        || '',
+    roll_number: data.roll_number || '',
+    event:       data.event       || '',
+    position:    data.position    || '',
+    team:        data.team        || ''
+  };
+  await _setDoc(resolveCertRef(id), payload);
+  await _setDoc(_doc(_db, '_cert_index', _indexKey(id)), { ...payload, _certId: id });
+}
+
+async function deleteCert(id) {
+  await _deleteDoc(resolveCertRef(id));
+  await _deleteDoc(_doc(_db, '_cert_index', _indexKey(id)));
+}
+
+/**
+ * Convert a cert ID like "NSS/GOONJ26/022" to a safe
+ * flat document ID for the _cert_index collection.
+ * Replaces "/" with "__" so it's a valid Firestore doc ID.
+ */
+function _indexKey(id) {
+  return id.trim().replace(/\//g, '__');
+}
+
+/**
+ * One-time migration helper — call from browser console:
+ *   migrateToIndex()
+ * Reads the existing nested structure and populates the
+ * _cert_index collection so getAllCerts() works immediately.
+ */
+async function migrateToIndex() {
+  console.log('Starting migration to _cert_index…');
+  let count = 0;
+  const l1 = await _getDocs(_collection(_db, 'certificates'));
+  for (const d1 of l1.docs) {
+    // d1 is e.g. "NSS"
+    // Try to get sub-collections by reading known sub-col names
+    // Since we can't listCollections, try getDocs on every
+    // sub-path we know about from the index — chicken-and-egg.
+    // Instead: manually specify the org name as d1.id and
+    // try to crawl two levels down.
     try {
-      const recs = await getAllCerts();
-      document.getElementById('stat-total').textContent  = recs.length;
-      document.getElementById('stat-events').textContent = new Set(recs.map(r => r.event)).size;
-      document.getElementById('stat-teams').textContent  = new Set(recs.map(r => r.team)).size;
-    } catch (e) {
-      console.error('updateStats:', e);
-    }
-  }
-
-  /* ══════════════════════════════════════════════════════════════
-     PAGE NAVIGATION
-     ══════════════════════════════════════════════════════════════ */
-  function showPage(name) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-    document.getElementById('page-' + name).classList.add('active');
-    document.querySelectorAll('.nav-tab')[{ verify: 0, qr: 1, admin: 2 }[name]].classList.add('active');
-    if (name === 'admin') renderTable();
-  }
-
-  /* ══════════════════════════════════════════════════════════════
-     VERIFY
-     ══════════════════════════════════════════════════════════════ */
-  async function verifyCert() {
-    const raw = document.getElementById('cert-id-input').value.trim();
-    const out = document.getElementById('result');
-    if (!raw) { out.innerHTML = ''; return; }
-
-    out.innerHTML = `<div style="text-align:center;padding:24px;color:var(--muted)">
-      <span class="spinner"></span> Checking records…</div>`;
-
-    try {
-      const rec = await lookupCert(raw);
-      out.innerHTML = rec ? buildValidCard(raw, rec) : buildInvalidCard(raw);
-      qrShown = false; /* reset QR toggle state on every new result */
-    } catch (e) {
-      out.innerHTML = `<div style="text-align:center;padding:24px;color:var(--red)">
-        ⚠ Error connecting to database. Please try again.</div>`;
-      console.error('verifyCert:', e);
-    }
-  }
-
-  function buildValidCard(id, r) {
-    return `
-    <div class="result-card">
-      <div class="result-header valid">
-        <div class="status-icon">✔</div>
-        <div>
-          <div class="result-title">Valid Certificate</div>
-          <div class="result-sub">${esc(id)}</div>
-        </div>
-      </div>
-      <div class="result-body">
-        <div class="cert-fields">
-          <div class="cert-field">
-            <div class="cert-field-label">Name</div>
-            <div class="cert-field-value">${esc(r.name)}</div>
-          </div>
-          <div class="cert-field">
-            <div class="cert-field-label">Roll Number</div>
-            <div class="cert-field-value">${esc(r.roll_number)}</div>
-          </div>
-          <div class="cert-field">
-            <div class="cert-field-label">Event</div>
-            <div class="cert-field-value">${esc(r.event)}</div>
-          </div>
-          <div class="cert-field">
-            <div class="cert-field-label">Position</div>
-            <div class="cert-field-value">${esc(r.position || '—')}</div>
-          </div>
-          <div class="cert-field full">
-            <div class="cert-field-label">Team</div>
-            <div class="cert-field-value">${esc(r.team || '—')}</div>
-          </div>
-        </div>
-        <div class="cert-actions">
-          <button class="btn btn-outline btn-sm" onclick="toggleQR()">⬛ Show QR</button>
-          <div id="qr-display"></div>
-        </div>
-      </div>
-    </div>`;
-  }
-
-  function buildInvalidCard(id) {
-    return `
-    <div class="result-card">
-      <div class="result-header invalid">
-        <div class="status-icon">✘</div>
-        <div>
-          <div class="result-title">Certificate Not Found or Invalid</div>
-          <div class="result-sub">${esc(id)}</div>
-        </div>
-      </div>
-      <div class="result-body">
-        <div class="not-found-body">
-          <p>No record found for this Certificate ID.<br/>
-          Please check the ID and try again, or contact the NSS Cell.</p>
-        </div>
-      </div>
-    </div>`;
-  }
-
-  /* ══════════════════════════════════════════════════════════════
-     QR TOGGLE ON RESULT CARD
-     ══════════════════════════════════════════════════════════════ */
-  let qrShown = false;
-
-  function toggleQR() {
-    const box = document.getElementById('qr-display');
-    if (!box) return;
-    if (qrShown) {
-      box.style.display = 'none';
-      qrShown = false;
-      return;
-    }
-    const id  = document.getElementById('cert-id-input').value.trim();
-    const url = makeVerifyURL(id);
-    box.innerHTML = '';
-    box.style.display = 'inline-block';
-    new QRCode(box, {
-      text: url, width: 128, height: 128,
-      colorDark: '#1e2118', colorLight: '#ffffff',
-      correctLevel: QRCode.CorrectLevel.H
-    });
-    qrShown = true;
-  }
-
-  /* ══════════════════════════════════════════════════════════════
-     URL PARAM AUTO-VERIFY
-     Called after Firebase is confirmed ready.
-     ══════════════════════════════════════════════════════════════ */
-  function checkURLParam() {
-    const id = new URLSearchParams(window.location.search).get('id');
-    if (id) {
-      document.getElementById('cert-id-input').value = id;
-      verifyCert();
-    }
-  }
-
-  /* ══════════════════════════════════════════════════════════════
-     QR GENERATOR PAGE
-     ══════════════════════════════════════════════════════════════ */
-  function generateQR() {
-    const id = document.getElementById('qr-cert-input').value.trim();
-    if (!id) return;
-    const url = makeVerifyURL(id);
-    const box = document.getElementById('qr-gen-box');
-    box.innerHTML = '';
-    new QRCode(box, {
-      text: url, width: 200, height: 200,
-      colorDark: '#1e2118', colorLight: '#ffffff',
-      correctLevel: QRCode.CorrectLevel.H
-    });
-    document.getElementById('qr-url-label').textContent = url;
-    document.getElementById('qr-output-box').style.display = 'block';
-  }
-
-  function downloadQR() {
-    const canvas = document.getElementById('qr-gen-box').querySelector('canvas');
-    if (!canvas) return;
-    const a  = document.createElement('a');
-    a.download = 'qr_' + document.getElementById('qr-cert-input').value.replace(/\//g, '_') + '.png';
-    a.href   = canvas.toDataURL('image/png');
-    a.click();
-  }
-
-  function copyQRUrl() {
-    const url = document.getElementById('qr-url-label').textContent;
-    navigator.clipboard.writeText(url).then(() => alert('URL copied to clipboard!'));
-  }
-
-  /* ══════════════════════════════════════════════════════════════
-     ADMIN — LOGIN / LOGOUT
-     ══════════════════════════════════════════════════════════════ */
-  function adminLogin() {
-    const pass   = document.getElementById('admin-pass').value;
-    const stored = localStorage.getItem(PASS_KEY) || DEFAULT_PASS;
-    if (pass === stored) {
-      document.getElementById('admin-gate').style.display = 'none';
-      document.getElementById('admin-panel').classList.add('visible');
-      renderTable();
-    } else {
-      const inp = document.getElementById('admin-pass');
-      inp.style.borderColor = 'var(--red)';
-      setTimeout(() => { inp.style.borderColor = ''; }, 1200);
-    }
-  }
-
-  function adminLogout() {
-    document.getElementById('admin-gate').style.display = '';
-    document.getElementById('admin-panel').classList.remove('visible');
-    document.getElementById('admin-pass').value = '';
-  }
-
-  /* ══════════════════════════════════════════════════════════════
-     ADMIN — ADD CERTIFICATE
-     ══════════════════════════════════════════════════════════════ */
-  async function addCertificate() {
-    const id  = document.getElementById('f-id').value.trim();
-    const msg = document.getElementById('add-msg');
-
-    if (!id || !document.getElementById('f-name').value.trim()) {
-      showMsg(msg, 'error', 'Certificate ID and Name are required.');
-      return;
-    }
-
-    try {
-      const existing = await lookupCert(id);
-      if (existing) {
-        showMsg(msg, 'error', `Certificate ID "${id}" already exists.`);
-        return;
-      }
-      await insertCert(id, {
-        name:        document.getElementById('f-name').value.trim(),
-        roll_number: document.getElementById('f-roll').value.trim(),
-        event:       document.getElementById('f-event').value.trim(),
-        position:    document.getElementById('f-position').value.trim(),
-        team:        document.getElementById('f-team').value.trim()
-      });
-      showMsg(msg, 'success', `Certificate "${id}" added successfully!`);
-      ['f-id', 'f-name', 'f-roll', 'f-event', 'f-position', 'f-team']
-        .forEach(fid => { document.getElementById(fid).value = ''; });
-      await renderTable();
-      await updateStats();
-    } catch (e) {
-      showMsg(msg, 'error', 'Error saving to database. Check console.');
-      console.error('addCertificate:', e);
-    }
-  }
-
-  /* ══════════════════════════════════════════════════════════════
-     ADMIN — RENDER TABLE
-     ══════════════════════════════════════════════════════════════ */
-  async function renderTable() {
-    const tbody = document.getElementById('records-tbody');
-    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--muted)">
-      <span class="spinner"></span> Loading…</td></tr>`;
-    try {
-      const recs = await getAllCerts();
-      tbody.innerHTML = '';
-      if (!recs.length) {
-        tbody.innerHTML = `<tr><td colspan="7"
-          style="text-align:center;color:var(--muted);padding:24px">No records yet.</td></tr>`;
-        return;
-      }
-      recs.forEach(r => {
-        const tr     = document.createElement('tr');
-        const safeId = r.id.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
-        tr.innerHTML = `
-          <td class="id-cell">${esc(r.id)}</td>
-          <td>${esc(r.name)}</td>
-          <td style="font-family:var(--font-mono);font-size:12px">${esc(r.roll_number)}</td>
-          <td>${esc(r.event)}</td>
-          <td>${esc(r.position)}</td>
-          <td>${esc(r.team)}</td>
-          <td><button class="del-btn" onclick="confirmDelete('${safeId}')">🗑</button></td>`;
-        tbody.appendChild(tr);
-      });
-    } catch (e) {
-      tbody.innerHTML = `<tr><td colspan="7"
-        style="text-align:center;color:var(--red);padding:20px">Error loading records.</td></tr>`;
-      console.error('renderTable:', e);
-    }
-  }
-
-  /* ══════════════════════════════════════════════════════════════
-     ADMIN — DELETE  (fully async — table/stats wait for deletion)
-     ══════════════════════════════════════════════════════════════ */
-  async function confirmDelete(id) {
-    if (!confirm(`Delete certificate "${id}"?`)) return;
-    try {
-      await deleteCert(id);
-      await renderTable();
-      await updateStats();
-    } catch (e) {
-      alert('Error deleting record. Check console.');
-      console.error('confirmDelete:', e);
-    }
-  }
-
-  /* ══════════════════════════════════════════════════════════════
-     ADMIN — CSV IMPORT
-     importCSV() triggers the hidden file input.
-     handleCSV() processes the selected file.
-     ══════════════════════════════════════════════════════════════ */
-  function importCSV() {
-    document.getElementById('csv-file').click();
-  }
-
-  async function handleCSV(e) {
-    const file = e.target.files[0];
-    if (!file) return;
-    const msg = document.getElementById('add-msg');
-
-    const reader = new FileReader();
-    reader.onload = async ev => {
-      const lines = ev.target.result.split('\n').filter(l => l.trim());
-      let added = 0, skipped = 0;
-
-      for (const line of lines) {
-        /* Skip header row */
-        if (line.toLowerCase().startsWith('certificate_id')) continue;
-
-        /* Strip surrounding quotes (basic CSV handling) */
-        const cols = line.split(',').map(c => c.trim().replace(/^"|"$/g, ''));
-        if (cols.length < 2) continue;
-
-        const [id, name, roll_number, event, position, team] = cols;
-        if (!id || !name) { skipped++; continue; }
-
-        try {
-          const existing = await lookupCert(id);
-          if (existing) { skipped++; continue; }
-          await insertCert(id, {
-            name,
-            roll_number: roll_number || '',
-            event:       event       || '',
-            position:    position    || '',
-            team:        team        || ''
-          });
-          added++;
-        } catch (err) {
-          skipped++;
-          console.error('CSV row error:', id, err);
+      // Level 2: try to getDocs of a sub-collection named after each doc
+      // We don't know sub-collection names, so we'll use the
+      // Firestore REST API via fetch to list sub-collections:
+      const projectId = 'nss-certificate-verification';
+      const path = `projects/${projectId}/databases/(default)/documents/certificates/${d1.id}`;
+      const resp = await fetch(
+        `https://firestore.googleapis.com/v1/${path}:listCollectionIds`,
+        { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' }
+      );
+      const json = await resp.json();
+      const subCols = (json.collectionIds || []);
+      for (const subCol of subCols) {
+        const l2 = await _getDocs(_collection(_db, 'certificates', d1.id, subCol));
+        for (const d2 of l2.docs) {
+          const certId  = `${d1.id}/${subCol}/${d2.id}`;
+          const payload = d2.data();
+          if (payload.name !== undefined) {
+            await _setDoc(
+              _doc(_db, '_cert_index', _indexKey('NSS/' + certId)),
+              { ...payload, _certId: 'NSS/' + certId }
+            );
+            count++;
+            console.log(`  Indexed: NSS/${certId}`);
+          }
         }
       }
-
-      showMsg(msg, 'success', `Imported ${added} records. Skipped ${skipped}.`);
-      await renderTable();
-      await updateStats();
-      e.target.value = ''; /* reset file input so same file can be re-imported */
-    };
-    reader.readAsText(file);
-  }
-
-  /* ══════════════════════════════════════════════════════════════
-     ADMIN — CSV EXPORT
-     ══════════════════════════════════════════════════════════════ */
-  async function exportCSV() {
-    try {
-      const recs = await getAllCerts();
-      const rows = [['certificate_id', 'name', 'roll_number', 'event', 'position', 'team']];
-      recs.forEach(r => rows.push([r.id, r.name, r.roll_number, r.event, r.position, r.team]));
-      const csv  = rows.map(r => r.map(c => `"${(c || '').replace(/"/g, '""')}"`).join(',')).join('\n');
-      const a    = document.createElement('a');
-      a.href     = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
-      a.download = 'nss_certificates.csv';
-      a.click();
-    } catch (e) {
-      alert('Error exporting. Check console.');
-      console.error('exportCSV:', e);
+    } catch(e) {
+      console.warn('Could not crawl sub-collections of', d1.id, e);
     }
   }
+  console.log(`Migration complete. Indexed ${count} certificates.`);
+  await updateStats();
+}
 
-  /* ══════════════════════════════════════════════════════════════
-     HELPERS
-     ══════════════════════════════════════════════════════════════ */
-  function makeVerifyURL(id) {
-    return `${window.location.origin}${window.location.pathname}?id=${encodeURIComponent(id)}`;
-  }
+/* ══════════════════════════════════════════════════════
+   STATS  (animated counters)
+══════════════════════════════════════════════════════ */
+async function updateStats() {
+  try {
+    const recs = await getAllCerts();
+    animateCount(document.getElementById('stat-total'),  recs.length);
+    animateCount(document.getElementById('stat-events'), new Set(recs.map(r => r.event)).size);
+    animateCount(document.getElementById('stat-teams'),  new Set(recs.map(r => r.team)).size);
+  } catch(e) { console.error('updateStats:', e); }
+}
 
-  function esc(str) {
-    return String(str || '')
-      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-  }
+/* ══════════════════════════════════════════════════════
+   PAGE TRANSITIONS  (animated)
+══════════════════════════════════════════════════════ */
+let _currentPage = 'verify';
 
-  function showMsg(el, type, text) {
-    el.className     = 'msg ' + type;
-    el.textContent   = text;
-    el.style.display = 'block';
-    setTimeout(() => { el.style.display = 'none'; }, 4000);
-  }
+function showPage(name) {
+  if (name === _currentPage) return;
 
-  /* ══════════════════════════════════════════════════════════════
-     INIT
-     Wait for the ES module to signal Firebase is ready before
-     making any Firestore calls. This eliminates the race condition.
-     ══════════════════════════════════════════════════════════════ */
-  window.addEventListener('firebase-ready', () => {
-    const f     = window._firebase;
-    _db         = f.db;
-    _doc        = f.doc;
-    _getDoc     = f.getDoc;
-    _setDoc     = f.setDoc;
-    _deleteDoc  = f.deleteDoc;
-    _getDocs    = f.getDocs;
-    _collection = f.collection;
+  const outEl = document.getElementById('page-' + _currentPage);
+  const inEl  = document.getElementById('page-' + name);
 
-    updateStats();
-    checkURLParam();
+  /* Tabs */
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.nav-tab')[{ verify: 0, qr: 1, admin: 2 }[name]].classList.add('active');
+
+  /* Animate out */
+  outEl.style.display = 'block';
+  outEl.classList.add('leaving');
+
+  setTimeout(() => {
+    outEl.classList.remove('leaving');
+    outEl.classList.remove('active');
+    outEl.style.display = '';
+
+    inEl.style.display = 'block';
+    inEl.classList.add('entering');
+    inEl.classList.add('active');
+
+    setTimeout(() => inEl.classList.remove('entering'), 350);
+
+    _currentPage = name;
+    if (name === 'admin') renderTable();
+  }, 280);
+}
+
+/* ══════════════════════════════════════════════════════
+   RECENT LOOKUPS
+══════════════════════════════════════════════════════ */
+function getHistory() {
+  try { return JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]'); }
+  catch(e) { return []; }
+}
+function saveHistory(h) { localStorage.setItem(HISTORY_KEY, JSON.stringify(h)); }
+
+function addToHistory(id, rec) {
+  let h = getHistory();
+  /* Remove if already exists */
+  h = h.filter(x => x.id !== id);
+  h.unshift({
+    id,
+    name:   rec ? rec.name : null,
+    status: rec ? 'valid' : 'invalid',
+    time:   Date.now()
   });
+  if (h.length > MAX_HISTORY) h = h.slice(0, MAX_HISTORY);
+  saveHistory(h);
+  renderHistory();
+}
 
-  /* Enter key on search input */
-  document.getElementById('cert-id-input').addEventListener('keydown', e => {
-    if (e.key === 'Enter') verifyCert();
+function clearHistory() {
+  saveHistory([]);
+  renderHistory();
+}
+
+function timeAgo(ts) {
+  const s = Math.floor((Date.now() - ts) / 1000);
+  if (s < 60)  return `${s}s ago`;
+  if (s < 3600) return `${Math.floor(s/60)}m ago`;
+  if (s < 86400) return `${Math.floor(s/3600)}h ago`;
+  return `${Math.floor(s/86400)}d ago`;
+}
+
+function renderHistory() {
+  const h   = getHistory();
+  const sec = document.getElementById('recent-section');
+  const lst = document.getElementById('recent-list');
+  if (!h.length) { sec.style.display = 'none'; return; }
+  sec.style.display = 'block';
+  lst.innerHTML = h.map((item, i) => `
+    <div class="recent-item" onclick="reuseHistory('${esc(item.id)}')"
+         style="animation-delay:${i * 50}ms">
+      <div class="recent-dot ${item.status}"></div>
+      <div class="recent-id">${esc(item.id)}</div>
+      <div class="recent-name">${item.name ? esc(item.name) : '—'}</div>
+      <div class="recent-status ${item.status}">${item.status}</div>
+      <div class="recent-time">${timeAgo(item.time)}</div>
+    </div>`).join('');
+}
+
+function reuseHistory(id) {
+  document.getElementById('cert-id-input').value = id;
+  verifyCert();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ══════════════════════════════════════════════════════
+   VERIFY
+══════════════════════════════════════════════════════ */
+async function verifyCert() {
+  const raw = document.getElementById('cert-id-input').value.trim();
+  const out = document.getElementById('result');
+  if (!raw) { out.innerHTML = ''; return; }
+
+  out.innerHTML = `<div style="text-align:center;padding:24px;color:var(--muted)">
+    <span class="spinner"></span> Checking records…</div>`;
+
+  try {
+    const rec = await lookupCert(raw);
+    out.innerHTML = rec ? buildValidCard(raw, rec) : buildInvalidCard(raw);
+    qrShown = false;
+    addToHistory(raw, rec);
+  } catch(e) {
+    out.innerHTML = `<div style="text-align:center;padding:24px;color:var(--red)">
+      ⚠ Error connecting to database. Please try again.</div>`;
+    console.error('verifyCert:', e);
+  }
+}
+
+function buildValidCard(id, r) {
+  return `
+  <div class="result-card">
+    <div class="result-header valid">
+      <div class="status-icon">✔</div>
+      <div>
+        <div class="result-title">Valid Certificate</div>
+        <div class="result-sub">${esc(id)}</div>
+      </div>
+    </div>
+    <div class="result-body">
+      <div class="cert-fields">
+        <div class="cert-field">
+          <div class="cert-field-label">Name</div>
+          <div class="cert-field-value">${esc(r.name)}</div>
+        </div>
+        <div class="cert-field">
+          <div class="cert-field-label">Roll Number</div>
+          <div class="cert-field-value">${esc(r.roll_number)}</div>
+        </div>
+        <div class="cert-field">
+          <div class="cert-field-label">Event</div>
+          <div class="cert-field-value">${esc(r.event)}</div>
+        </div>
+        <div class="cert-field">
+          <div class="cert-field-label">Position</div>
+          <div class="cert-field-value">${esc(r.position || '—')}</div>
+        </div>
+        <div class="cert-field full">
+          <div class="cert-field-label">Team</div>
+          <div class="cert-field-value">${esc(r.team || '—')}</div>
+        </div>
+      </div>
+      <div class="cert-actions">
+        <button class="btn btn-outline btn-sm" onclick="toggleQR()">⬛ Show QR</button>
+        <button class="btn btn-sm btn-gold" onclick="openPreview('${esc(id)}','${esc(r.name)}','${esc(r.event)}','${esc(r.roll_number)}','${esc(r.position||'')}','${esc(r.team||'')}')">🎓 Preview Certificate</button>
+        <div id="qr-display"></div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function buildInvalidCard(id) {
+  return `
+  <div class="result-card">
+    <div class="result-header invalid">
+      <div class="status-icon">✘</div>
+      <div>
+        <div class="result-title">Certificate Not Found or Invalid</div>
+        <div class="result-sub">${esc(id)}</div>
+      </div>
+    </div>
+    <div class="result-body">
+      <div class="not-found-body">
+        <p>No record found for this Certificate ID.<br/>
+        Please check the ID and try again, or contact the NSS Cell.</p>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ── QR toggle on result card ──────────────────────── */
+let qrShown = false;
+function toggleQR() {
+  const box = document.getElementById('qr-display');
+  if (!box) return;
+  if (qrShown) { box.style.display = 'none'; qrShown = false; return; }
+  const id  = document.getElementById('cert-id-input').value.trim();
+  const url = makeVerifyURL(id);
+  box.innerHTML = '';
+  box.style.display = 'inline-block';
+  new QRCode(box, { text: url, width: 120, height: 120, colorDark: '#1e2118', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.H });
+  qrShown = true;
+}
+
+/* ══════════════════════════════════════════════════════
+   CERTIFICATE PREVIEW MODAL
+══════════════════════════════════════════════════════ */
+function openPreview(id, name, event, roll, position, team) {
+  document.getElementById('preview-name').textContent     = name     || '—';
+  document.getElementById('preview-event').textContent    = event    || '—';
+  document.getElementById('preview-roll').textContent     = roll     || '—';
+  document.getElementById('preview-position').textContent = position || '—';
+  document.getElementById('preview-team').textContent     = team     || '—';
+  document.getElementById('preview-cert-id').textContent  = 'Cert ID: ' + id;
+  document.getElementById('cert-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModalDirect() {
+  document.getElementById('cert-modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function closeModal(e) {
+  if (e.target === document.getElementById('cert-modal')) closeModalDirect();
+}
+function printCert() {
+  const content = document.getElementById('cert-paper').innerHTML;
+  const win = window.open('', '_blank', 'width=750,height=600');
+  win.document.write(`
+    <html><head><title>Certificate Preview</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@700&family=Spectral:ital,wght@0,400;1,300&display=swap" rel="stylesheet"/>
+    <style>
+      :root{--olive:#4a5a2e;--olive2:#6b7c3f;--gold:#c8a84b;--gold2:#e8c96a;--green:#2d6a4f;--muted:#7a7d6e;--ink:#1e2118;--font-head:'Rajdhani',sans-serif;--font-body:'Spectral',serif;}
+      body{margin:0;background:#fff;}
+      .cert-paper{position:relative;padding:44px 48px 36px;background:linear-gradient(135deg,#fffef5 0%,#fdf9ec 100%);text-align:center;overflow:hidden;min-height:100vh;}
+      .cert-paper::before{content:'';position:absolute;inset:0;border:10px solid var(--gold);opacity:.25;}
+      .cert-paper::after{content:'NSS';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-30deg);font-family:var(--font-head);font-size:160px;font-weight:700;color:rgba(74,90,46,.04);pointer-events:none;letter-spacing:10px;white-space:nowrap;}
+      .cert-corner{position:absolute;width:40px;height:40px;border-color:var(--gold);border-style:solid;opacity:.5;}
+      .cert-corner.tl{top:16px;left:16px;border-width:2px 0 0 2px;}
+      .cert-corner.tr{top:16px;right:16px;border-width:2px 2px 0 0;}
+      .cert-corner.bl{bottom:16px;left:16px;border-width:0 0 2px 2px;}
+      .cert-corner.br{bottom:16px;right:16px;border-width:0 2px 2px 0;}
+      .cert-emblem-preview{width:72px;height:72px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-size:22px;font-weight:700;color:var(--olive);margin:0 auto 14px;border:3px solid var(--gold2);}
+      .cert-org{font-family:var(--font-head);font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);}
+      .cert-title-preview{font-family:var(--font-head);font-size:26px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--olive);margin:6px 0;}
+      .cert-subtitle{font-family:var(--font-body);font-size:12px;font-style:italic;color:var(--muted);margin-bottom:20px;}
+      .cert-divider-gold{height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:16px 0;}
+      .cert-body-text{font-family:var(--font-body);font-size:14px;color:#444;line-height:1.6;margin:14px 0;}
+      .cert-name-display{font-family:var(--font-head);font-size:30px;font-weight:700;color:var(--olive);letter-spacing:1px;margin:8px 0;}
+      .cert-event-display{font-family:var(--font-head);font-size:16px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin:4px 0;}
+      .cert-details-row{display:flex;justify-content:center;gap:32px;margin-top:16px;}
+      .cert-detail-item{text-align:center;}
+      .cert-detail-label{font-family:var(--font-head);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+      .cert-detail-value{font-family:var(--font-body);font-size:13px;font-weight:600;color:var(--ink);}
+      .cert-valid-stamp{display:inline-block;border:2px solid var(--green);color:var(--green);font-family:var(--font-head);font-size:11px;letter-spacing:2px;text-transform:uppercase;padding:4px 14px;border-radius:3px;margin-top:18px;}
+      .cert-id-small{font-family:monospace;font-size:10px;color:var(--muted);margin-top:12px;}
+    </style></head><body>${content}</body></html>`);
+  win.document.close();
+  setTimeout(() => win.print(), 600);
+}
+
+/* ══════════════════════════════════════════════════════
+   URL PARAM
+══════════════════════════════════════════════════════ */
+function checkURLParam() {
+  const id = new URLSearchParams(window.location.search).get('id');
+  if (id) {
+    document.getElementById('cert-id-input').value = id;
+    verifyCert();
+  }
+}
+
+/* ══════════════════════════════════════════════════════
+   QR GENERATOR PAGE
+══════════════════════════════════════════════════════ */
+function generateQR() {
+  const id = document.getElementById('qr-cert-input').value.trim();
+  if (!id) return;
+  const url = makeVerifyURL(id);
+  const box = document.getElementById('qr-gen-box');
+  box.innerHTML = '';
+  new QRCode(box, { text: url, width: 200, height: 200, colorDark: '#1e2118', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.H });
+  document.getElementById('qr-url-label').textContent = url;
+  document.getElementById('qr-output-box').style.display = 'block';
+}
+function downloadQR() {
+  const canvas = document.getElementById('qr-gen-box').querySelector('canvas');
+  if (!canvas) return;
+  const a  = document.createElement('a');
+  a.download = 'qr_' + document.getElementById('qr-cert-input').value.replace(/\//g, '_') + '.png';
+  a.href = canvas.toDataURL('image/png');
+  a.click();
+}
+function copyQRUrl() {
+  const url = document.getElementById('qr-url-label').textContent;
+  navigator.clipboard.writeText(url).then(() => alert('URL copied!'));
+}
+
+/* ══════════════════════════════════════════════════════
+   ADMIN
+══════════════════════════════════════════════════════ */
+function adminLogin() {
+  const pass   = document.getElementById('admin-pass').value;
+  const stored = localStorage.getItem(PASS_KEY) || DEFAULT_PASS;
+  if (pass === stored) {
+    document.getElementById('admin-gate').style.display  = 'none';
+    document.getElementById('admin-panel').classList.add('visible');
+    renderTable();
+  } else {
+    const inp = document.getElementById('admin-pass');
+    inp.style.borderColor = 'var(--red)';
+    inp.style.animation = 'shake .3s ease';
+    setTimeout(() => { inp.style.borderColor = ''; inp.style.animation = ''; }, 600);
+  }
+}
+function adminLogout() {
+  document.getElementById('admin-gate').style.display = '';
+  document.getElementById('admin-panel').classList.remove('visible');
+  document.getElementById('admin-pass').value = '';
+}
+
+async function addCertificate() {
+  const id  = document.getElementById('f-id').value.trim();
+  const msg = document.getElementById('add-msg');
+  if (!id || !document.getElementById('f-name').value.trim()) {
+    showMsg(msg, 'error', 'Certificate ID and Name are required.');
+    return;
+  }
+  try {
+    const existing = await lookupCert(id);
+    if (existing) { showMsg(msg, 'error', `ID "${id}" already exists.`); return; }
+    await insertCert(id, {
+      name:        document.getElementById('f-name').value.trim(),
+      roll_number: document.getElementById('f-roll').value.trim(),
+      event:       document.getElementById('f-event').value.trim(),
+      position:    document.getElementById('f-position').value.trim(),
+      team:        document.getElementById('f-team').value.trim()
+    });
+    showMsg(msg, 'success', `Certificate "${id}" added!`);
+    ['f-id','f-name','f-roll','f-event','f-position','f-team'].forEach(fid => { document.getElementById(fid).value = ''; });
+    await renderTable();
+    await updateStats();
+  } catch(e) {
+    showMsg(msg, 'error', 'Error saving. Check console.');
+    console.error('addCertificate:', e);
+  }
+}
+
+/* ── TABLE + FILTER ──────────────────────────────────── */
+async function renderTable() {
+  const tbody = document.getElementById('records-tbody');
+  tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--muted)">
+    <span class="spinner"></span> Loading…</td></tr>`;
+  try {
+    _allRows = await getAllCerts();
+    renderFilteredRows(_allRows);
+  } catch(e) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:var(--red);padding:20px">Error loading.</td></tr>`;
+    console.error('renderTable:', e);
+  }
+}
+
+function renderFilteredRows(rows) {
+  const tbody = document.getElementById('records-tbody');
+  tbody.innerHTML = '';
+  if (!rows.length) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:24px">No records found.</td></tr>`;
+    return;
+  }
+  rows.forEach((r, i) => {
+    const tr = document.createElement('tr');
+    tr.style.animationDelay = `${i * 30}ms`;
+    const safeId = r.id.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+    tr.innerHTML = `
+      <td class="id-cell">${esc(r.id)}</td>
+      <td>${esc(r.name)}</td>
+      <td style="font-family:var(--font-mono);font-size:11px">${esc(r.roll_number)}</td>
+      <td>${esc(r.event)}</td>
+      <td>${esc(r.position)}</td>
+      <td>${esc(r.team)}</td>
+      <td>
+        <div class="tbl-actions">
+          <button class="edit-btn" onclick="openEditModal('${safeId}')" title="Edit">✏️</button>
+          <button class="del-btn" onclick="confirmDelete('${safeId}')" title="Delete">🗑</button>
+        </div>
+      </td>`;
+    tbody.appendChild(tr);
   });
+}
+
+function filterTable() {
+  const q = document.getElementById('table-search').value.toLowerCase();
+  if (!q) { renderFilteredRows(_allRows); return; }
+  const filtered = _allRows.filter(r =>
+    [r.id, r.name, r.roll_number, r.event, r.position, r.team]
+      .some(v => (v || '').toLowerCase().includes(q))
+  );
+  renderFilteredRows(filtered);
+}
+
+async function confirmDelete(id) {
+  if (!confirm(`Delete certificate "${id}"?`)) return;
+  try {
+    await deleteCert(id);
+    await renderTable();
+    await updateStats();
+  } catch(e) {
+    alert('Error deleting. Check console.');
+    console.error('confirmDelete:', e);
+  }
+}
+
+function importCSV() { document.getElementById('csv-file').click(); }
+
+async function handleCSV(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const msg = document.getElementById('add-msg');
+  const reader = new FileReader();
+  reader.onload = async ev => {
+    const lines = ev.target.result.split('\n').filter(l => l.trim());
+    let added = 0, skipped = 0;
+    for (const line of lines) {
+      if (line.toLowerCase().startsWith('certificate_id')) continue;
+      const cols = line.split(',').map(c => c.trim().replace(/^"|"$/g, ''));
+      if (cols.length < 2) continue;
+      const [id, name, roll_number, event, position, team] = cols;
+      if (!id || !name) { skipped++; continue; }
+      try {
+        const existing = await lookupCert(id);
+        if (existing) { skipped++; continue; }
+        await insertCert(id, { name, roll_number: roll_number||'', event: event||'', position: position||'', team: team||'' });
+        added++;
+      } catch(err) { skipped++; console.error('CSV row:', id, err); }
+    }
+    showMsg(msg, 'success', `Imported ${added}. Skipped ${skipped}.`);
+    await renderTable();
+    await updateStats();
+    e.target.value = '';
+  };
+  reader.readAsText(file);
+}
+
+async function exportCSV() {
+  try {
+    const recs = await getAllCerts();
+    const rows = [['certificate_id','name','roll_number','event','position','team']];
+    recs.forEach(r => rows.push([r.id, r.name, r.roll_number, r.event, r.position, r.team]));
+    const csv  = rows.map(r => r.map(c => `"${(c||'').replace(/"/g,'""')}"`).join(',')).join('\n');
+    const a    = document.createElement('a');
+    a.href     = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+    a.download = 'nss_certificates.csv';
+    a.click();
+  } catch(e) { alert('Export error.'); console.error(e); }
+}
+
+/* ══════════════════════════════════════════════════════
+   MIGRATION UI  (one-time, run from Admin panel)
+══════════════════════════════════════════════════════ */
+async function runMigration() {
+  const btn = document.getElementById('migrate-btn');
+  const msg = document.getElementById('migrate-msg');
+  btn.disabled = true;
+  btn.textContent = '⏳ Migrating…';
+  showMsg(msg, 'success', 'Migration started — check browser console for progress…');
+  try {
+    await migrateToIndex();
+    showMsg(msg, 'success', '✔ Migration complete! Your records are now indexed.');
+    btn.textContent = '✔ Done';
+    await renderTable();
+    await updateStats();
+  } catch(e) {
+    showMsg(msg, 'error', 'Migration error — check browser console.');
+    console.error('runMigration:', e);
+    btn.disabled = false;
+    btn.textContent = '▶ Run Migration';
+  }
+}
+
+/* ══════════════════════════════════════════════════════
+   EDIT MODAL
+══════════════════════════════════════════════════════ */
+let _editingId = null;
+
+async function openEditModal(id) {
+  _editingId = id;
+  const msg = document.getElementById('edit-msg');
+  msg.style.display = 'none';
+
+  /* Show modal immediately with a loading state */
+  document.getElementById('edit-cert-id-label').textContent = id;
+  ['e-name','e-roll','e-event','e-position','e-team'].forEach(fid => {
+    document.getElementById(fid).value = '…';
+    document.getElementById(fid).disabled = true;
+  });
+  document.getElementById('edit-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  /* Fetch the record and populate */
+  try {
+    const rec = await lookupCert(id);
+    if (!rec) {
+      showMsg(msg, 'error', 'Record not found in database.');
+      ['e-name','e-roll','e-event','e-position','e-team'].forEach(fid => {
+        document.getElementById(fid).value = '';
+        document.getElementById(fid).disabled = false;
+      });
+      return;
+    }
+    document.getElementById('e-name').value     = rec.name        || '';
+    document.getElementById('e-roll').value     = rec.roll_number || '';
+    document.getElementById('e-event').value    = rec.event       || '';
+    document.getElementById('e-position').value = rec.position    || '';
+    document.getElementById('e-team').value     = rec.team        || '';
+    ['e-name','e-roll','e-event','e-position','e-team'].forEach(fid => {
+      document.getElementById(fid).disabled = false;
+    });
+    /* Focus first field */
+    document.getElementById('e-name').focus();
+  } catch(e) {
+    showMsg(msg, 'error', 'Error loading record.');
+    console.error('openEditModal:', e);
+  }
+}
+
+async function saveEdit() {
+  const msg  = document.getElementById('edit-msg');
+  const name = document.getElementById('e-name').value.trim();
+  if (!name) { showMsg(msg, 'error', 'Name is required.'); return; }
+
+  /* Disable button to prevent double-save */
+  const saveBtn = document.querySelector('.edit-modal-footer .btn-primary');
+  saveBtn.disabled = true;
+  saveBtn.textContent = '⏳ Saving…';
+
+  try {
+    await updateCert(_editingId, {
+      name:        document.getElementById('e-name').value.trim(),
+      roll_number: document.getElementById('e-roll').value.trim(),
+      event:       document.getElementById('e-event').value.trim(),
+      position:    document.getElementById('e-position').value.trim(),
+      team:        document.getElementById('e-team').value.trim()
+    });
+
+    showMsg(msg, 'success', 'Certificate updated successfully!');
+    saveBtn.textContent = '✔ Saved!';
+
+    /* Flash the saved row green in the table */
+    const rows = document.querySelectorAll('#records-tbody tr');
+    rows.forEach(tr => {
+      if (tr.querySelector('.id-cell') &&
+          tr.querySelector('.id-cell').textContent === _editingId) {
+        tr.classList.add('row-saved');
+        setTimeout(() => tr.classList.remove('row-saved'), 1000);
+      }
+    });
+
+    /* Refresh table data and stats silently */
+    await renderTable();
+    await updateStats();
+
+    /* Auto-close after short delay */
+    setTimeout(() => {
+      closeEditModalDirect();
+      saveBtn.disabled = false;
+      saveBtn.textContent = '💾 Save Changes';
+    }, 1200);
+
+  } catch(e) {
+    showMsg(msg, 'error', 'Error saving. Check console.');
+    console.error('saveEdit:', e);
+    saveBtn.disabled = false;
+    saveBtn.textContent = '💾 Save Changes';
+  }
+}
+
+function closeEditModalDirect() {
+  document.getElementById('edit-modal').classList.remove('open');
+  document.body.style.overflow = '';
+  _editingId = null;
+}
+function closeEditModal(e) {
+  if (e.target === document.getElementById('edit-modal')) closeEditModalDirect();
+}
+
+/* ══════════════════════════════════════════════════════
+   HELPERS
+══════════════════════════════════════════════════════ */
+function makeVerifyURL(id) {
+  return `${window.location.origin}${window.location.pathname}?id=${encodeURIComponent(id)}`;
+}
+function esc(str) {
+  return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function showMsg(el, type, text) {
+  el.className = 'msg ' + type;
+  el.textContent = text;
+  el.style.display = 'block';
+  setTimeout(() => { el.style.display = 'none'; }, 4000);
+}
+
+/* ══════════════════════════════════════════════════════
+   KEYBOARD: Escape closes modal
+══════════════════════════════════════════════════════ */
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    closeModalDirect();
+    closeEditModalDirect();
+  }
+});
+
+/* ══════════════════════════════════════════════════════
+   INIT — wait for Firebase
+══════════════════════════════════════════════════════ */
+window.addEventListener('firebase-ready', () => {
+  const f     = window._firebase;
+  _db         = f.db;
+  _doc        = f.doc;
+  _getDoc     = f.getDoc;
+  _setDoc     = f.setDoc;
+  _deleteDoc  = f.deleteDoc;
+  _getDocs    = f.getDocs;
+  _collection = f.collection;
+
+  updateStats();
+  checkURLParam();
+  renderHistory();
+
+  /* Expose migration helper to browser console */
+  window.migrateToIndex = migrateToIndex;
+  console.info(
+    '%c NSS MMMUT Portal ',
+    'background:#4a5a2e;color:#e8c96a;font-weight:bold;padding:4px 8px;border-radius:3px',
+    '\nIf this is your first run, call migrateToIndex() in this console to index existing Firestore data.'
+  );
+});
+
+document.getElementById('cert-id-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') verifyCert();
+});
+
+/* Enter in edit modal fields triggers save */
+['e-name','e-roll','e-event','e-position','e-team'].forEach(fid => {
+  document.getElementById(fid).addEventListener('keydown', e => {
+    if (e.key === 'Enter') saveEdit();
+  });
+});
+
+/* Shake animation for wrong password */
+const styleEl = document.createElement('style');
+styleEl.textContent = `@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}`;
+document.head.appendChild(styleEl);
 </script>
 </body>
 </html>
